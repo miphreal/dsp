@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-13 01:20+0300\n"
+"POT-Creation-Date: 2012-12-13 02:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,26 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:14
+#: /home/miph/Develop/dsp/ui/frames/main.py:18
 msgid "Digital Signal Processing"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:34
+#: /home/miph/Develop/dsp/ui/frames/main.py:38
 msgid "Save plot"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:36
+#: /home/miph/Develop/dsp/ui/frames/main.py:40
 msgid "Exit"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:37
+#: /home/miph/Develop/dsp/ui/frames/main.py:41
 msgid "File"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:40
+#: /home/miph/Develop/dsp/ui/frames/main.py:44
 msgid "Signal Info"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:41
+#: /home/miph/Develop/dsp/ui/frames/main.py:45
 msgid "Signal"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:48
+msgid "Author"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:49
+msgid "About"
 msgstr ""

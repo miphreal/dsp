@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-13 00:29+0300\n"
+"POT-Creation-Date: 2012-12-13 02:35+0300\n"
 "PO-Revision-Date: 2012-12-13 00:29+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,26 +18,34 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:14
+#: /home/miph/Develop/dsp/ui/frames/main.py:18
 msgid "Digital Signal Processing"
 msgstr "Цифровая обработка сигнала"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:34
+#: /home/miph/Develop/dsp/ui/frames/main.py:38
 msgid "Save plot"
 msgstr "Экспорт графика"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:36
+#: /home/miph/Develop/dsp/ui/frames/main.py:40
 msgid "Exit"
 msgstr "Выход"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:37
+#: /home/miph/Develop/dsp/ui/frames/main.py:41
 msgid "File"
 msgstr "Файл"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:40
+#: /home/miph/Develop/dsp/ui/frames/main.py:44
 msgid "Signal Info"
 msgstr "Информация о сигнале"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:41
+#: /home/miph/Develop/dsp/ui/frames/main.py:45
 msgid "Signal"
 msgstr "Сигнал"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:48
+msgid "Author"
+msgstr "Автор"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:49
+msgid "About"
+msgstr "О программе"
