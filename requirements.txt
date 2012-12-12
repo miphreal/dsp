@@ -1,0 +1,6 @@
+Fabric==1.5.0
+numpy==1.6.1
+wxPython==2.8.12.1
+wxPython-common==2.8.12.1
+scipy==0.9.0
+matplotlib==1.1.1rc
