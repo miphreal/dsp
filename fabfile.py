@@ -12,6 +12,7 @@ PROJECT_ = lambda p: os.path.normpath(os.path.join(env.project_root, p))
 
 env.pot_file = PROJECT_('locale/messages.pot')
 env.languages = 'ru_RU'
+env.default_language = 'ru_RU'
 
 
 # Translation
@@ -20,11 +21,18 @@ def build_template():
 
 def build_po(lang):
     po_file = PROJECT_('locale/%(lang)s/LC_MESSAGES/messages.po' % dict(lang=lang))
-    local('msginit -l %(locale)s -i %(pot_file)s -o %(po_file)s' % dict(env,
-        locale=lang.partition('_')[0], po_file=po_file
-    ))
+    if not os.path.exists(po_file):
+        local('msginit --no-translator -l %(locale)s -i %(pot_file)s -o %(po_file)s' % dict(env,
+            locale=lang.partition('_')[0], po_file=po_file
+        ))
+        return True
+    return False
 
-def compile_mo(lang):
+def update_po(lang=env.default_language):
+    po_file = PROJECT_('locale/%(lang)s/LC_MESSAGES/messages.po' % dict(lang=lang))
+    local('msgmerge --update %(po_file)s %(pot_file)s' % dict(env, po_file=po_file))
+
+def compile_mo(lang=env.default_language):
     local('msgfmt -cv {pattern}.po -o {pattern}.mo'.format(
         pattern=PROJECT_('locale/%(lang)s/LC_MESSAGES/messages' % dict(lang=lang))
     ))
@@ -33,7 +41,8 @@ def translate(languages=env.languages):
     build_template()
     for lang in languages.split(';'):
         local('mkdir -p locale/%s/LC_MESSAGES/' % lang)
-        build_po(lang)
+        if not build_po(lang):
+            update_po(lang)
         compile_mo(lang)
 
 
