@@ -45,3 +45,4 @@ class SignalDate(object):
 
         header = Struct(HEADER_DATA_FORMAT)
         self.header = SignalHeader(*header.unpack(self.data[:header.size]))
+        self.raw_signal = self.data[header.size:]

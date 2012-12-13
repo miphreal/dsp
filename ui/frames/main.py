@@ -18,7 +18,7 @@ class MainWindow(wx.Frame):
     title = _('Digital Signal Processing')
 
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, self.title, size=(800, 500))
+        wx.Frame.__init__(self, None, -1, self.title, size=(800, 650))
 
         self.create_menu()
         self.create_tool_bar()
@@ -83,19 +83,17 @@ class MainWindow(wx.Frame):
         mu, sigma = 100, 15
         x = mu + sigma * np.random.randn(10000)
 
-        plt = self.fig.add_subplot(313)
+        plt = self.fig.add_subplot(313, xlabel='Smarts', ylabel='Probability')
         # the histogram of the data
         n, bins, patches = plt.hist(x, 50, normed=1, facecolor='g', alpha=0.75)
 
-        plt.xaxis.set_label('Smarts')
-        plt.yaxis.set_label('Probability')
         plt.set_title('Histogram of IQ')
         plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
 
         plt.axis([40, 160, 0, 0.03])
         plt.grid(True)
 
-
+        self.fig.tight_layout()
         self.canvas = FigCanvas(self.panel, -1, self.fig)
         self.canvas.draw()
 
