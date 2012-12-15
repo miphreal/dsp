@@ -39,7 +39,7 @@ class Events(dict):
     * - 1+ any symbols
     ~ - 1+ any symbols except :
 
-    If you use 
+    If you use
 
     """
 

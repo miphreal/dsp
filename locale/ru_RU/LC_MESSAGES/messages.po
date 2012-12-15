@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-15 14:04+0300\n"
+"POT-Creation-Date: 2012-12-16 01:06+0300\n"
 "PO-Revision-Date: 2012-12-13 00:29+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,65 +18,70 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: /home/miph/Develop/dsp/visualizer.py:12
+#: /home/miph/Develop/dsp/visualizer.py:14
 msgid "Base Visualizer"
 msgstr "Базовый отрисовщик данных"
 
-#: /home/miph/Develop/dsp/visualizer.py:21
+#: /home/miph/Develop/dsp/visualizer.py:32
 msgid "Test Visualizer"
 msgstr "Тестовый отрисовщик"
 
+#: /home/miph/Develop/dsp/visualizer.py:65
+#: /home/miph/Develop/dsp/ui/frames/main.py:52
+msgid "Signal Info"
+msgstr "Информация о сигнале"
+
+#: /home/miph/Develop/dsp/data.py:15
+msgid "Channel Data Source (*.bin)"
+msgstr "Группа каналов (*.bin)"
+
 #: /home/miph/Develop/dsp/data.py:16
-msgid "Channel Data Source"
-msgstr "Группа каналов"
+msgid "Channels Source Bundle (*.txt)"
+msgstr "Группа каналов (*.txt)"
 
-#: /home/miph/Develop/dsp/data.py:17
-msgid "Channels Source Bundle"
-msgstr "Группа каналов"
-
-#: /home/miph/Develop/dsp/data.py:65
+#: /home/miph/Develop/dsp/data.py:66
 #, python-format
 msgid "File is loaded: %s"
 msgstr "Файл загружен: %s"
 
-#: /home/miph/Develop/dsp/data.py:66
+#: /home/miph/Develop/dsp/data.py:67
 #, python-format
 msgid "File info: %s"
 msgstr "Информация о файле: %s"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:24
+#: /home/miph/Develop/dsp/ui/frames/main.py:22
 msgid "Digital Signal Processing"
 msgstr "Цифровая обработка сигнала"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:52
-#: /home/miph/Develop/dsp/ui/frames/main.py:124
+#: /home/miph/Develop/dsp/ui/frames/main.py:44
+#: /home/miph/Develop/dsp/ui/frames/main.py:90
 msgid "Open data source"
 msgstr "Открыть файлы с данными"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:54
+#: /home/miph/Develop/dsp/ui/frames/main.py:46
 msgid "Save plot"
 msgstr "Экспорт графика"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:56
+#: /home/miph/Develop/dsp/ui/frames/main.py:48
 msgid "Exit"
 msgstr "Выход"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:57
+#: /home/miph/Develop/dsp/ui/frames/main.py:49
 msgid "File"
 msgstr "Файл"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:60
-msgid "Signal Info"
-msgstr "Информация о сигнале"
-
-#: /home/miph/Develop/dsp/ui/frames/main.py:61
+#: /home/miph/Develop/dsp/ui/frames/main.py:56
 msgid "Signal"
 msgstr "Сигнал"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:64
+#: /home/miph/Develop/dsp/ui/frames/main.py:59
 msgid "Author"
 msgstr "Автор"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:65
+#: /home/miph/Develop/dsp/ui/frames/main.py:60
 msgid "About"
 msgstr "О программе"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:106
+msgid "Save plot as..."
+msgstr "Экспорт графика"
