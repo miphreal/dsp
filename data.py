@@ -1,7 +1,7 @@
 # coding=utf-8
 import os
 from collections import namedtuple
-from struct import Struct
+from struct import Struct, unpack
 
 from lib.log import get_logger
 from lib.i18n import gettext as _
@@ -61,13 +61,18 @@ class SignalData(object):
         self.header = SignalHeader(*header.unpack(self.data[:header.size]))
         self.raw_signal = self.data[header.size:]
 
+        self.float_data = [unpack('f', self.raw_signal[i:i+4]) for i in xrange(0, len(self.raw_signal)-4, 4)]
+
         logger.info(_('File is loaded: %s') % file_name)
         logger.info(_('File info: %s') % repr(self.header))
 
 
-class SignalsDataSet(object):
-    def __init__(self, files):
-        self.signals = [SignalData(f) for f in files]
+class SignalsDataSet(list):
+    def __init__(self, files, *args, **kwargs):
+        super(SignalsDataSet, self).__init__(*args, **kwargs)
+        self.extend([SignalData(f) for f in files])
+
+        self.signals = self
 
 
 def data_factory(file_name):
