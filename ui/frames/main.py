@@ -11,6 +11,9 @@ import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
+
+import settings
+from data import data_factory
 from lib.i18n import gettext as _
 
 
@@ -28,6 +31,8 @@ class MainWindow(wx.Frame):
         self.Centre()
         self.Show()
 
+        self.data = None
+
     ##
     # Interface building
 
@@ -35,6 +40,8 @@ class MainWindow(wx.Frame):
         self.menu_bar = wx.MenuBar()
 
         menu_file = wx.Menu()
+        m_open = menu_file.Append(-1, _('Open data source'))
+        menu_file.AppendSeparator()
         m_expt = menu_file.Append(-1, _('Save plot'))
         menu_file.AppendSeparator()
         m_exit = menu_file.Append(-1, _('Exit'))
@@ -49,6 +56,7 @@ class MainWindow(wx.Frame):
         self.menu_bar.Append(menu_about, _('About'))
 
         # bind events
+        self.Bind(wx.EVT_MENU, self.on_open, m_open)
         self.Bind(wx.EVT_MENU, self.on_export_image, m_expt)
         self.Bind(wx.EVT_MENU, self.on_exit, m_exit)
 
@@ -101,6 +109,19 @@ class MainWindow(wx.Frame):
     # Event handling
 
     # Menu events
+    def on_open(self, event):
+        dlg = wx.FileDialog(
+            self,
+            message=_('Open data source'),
+            defaultDir=os.getcwd(),
+            defaultFile='',
+            wildcard=settings.SOURCE_DATA_TYPES_LINE,
+            style=wx.OPEN)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            self.data = data_factory(path)
+
     def on_export_image(self, event):
         file_choices = "PNG (*.png)|*.png"
 

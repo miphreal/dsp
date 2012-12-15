@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-13 02:36+0300\n"
+"POT-Creation-Date: 2012-12-15 04:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,57 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:18
+#: /home/miph/Develop/dsp/settings.py:10
+msgid "Channels Source Bundle"
+msgstr ""
+
+#: /home/miph/Develop/dsp/settings.py:11
+msgid "Channel Data Source"
+msgstr ""
+
+#: /home/miph/Develop/dsp/data.py:59
+#, python-format
+msgid "File is loaded: %s"
+msgstr ""
+
+#: /home/miph/Develop/dsp/data.py:60
+#, python-format
+msgid "File info: %s"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:21
 msgid "Digital Signal Processing"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:38
-msgid "Save plot"
-msgstr ""
-
-#: /home/miph/Develop/dsp/ui/frames/main.py:40
-msgid "Exit"
-msgstr ""
-
-#: /home/miph/Develop/dsp/ui/frames/main.py:41
-msgid "File"
-msgstr ""
-
-#: /home/miph/Develop/dsp/ui/frames/main.py:44
-msgid "Signal Info"
+#: /home/miph/Develop/dsp/ui/frames/main.py:43
+#: /home/miph/Develop/dsp/ui/frames/main.py:115
+msgid "Open data source"
 msgstr ""
 
 #: /home/miph/Develop/dsp/ui/frames/main.py:45
-msgid "Signal"
+msgid "Save plot"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:47
+msgid "Exit"
 msgstr ""
 
 #: /home/miph/Develop/dsp/ui/frames/main.py:48
+msgid "File"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:51
+msgid "Signal Info"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:52
+msgid "Signal"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:55
 msgid "Author"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:49
+#: /home/miph/Develop/dsp/ui/frames/main.py:56
 msgid "About"
 msgstr ""

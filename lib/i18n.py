@@ -18,4 +18,4 @@ def setup(force_lang=None):
     t = _gettext.translation('messages', 'locale', fallback=True)
 
 def gettext(message):
-    return t.gettext(message)
+    return t.gettext(message).decode('utf8')

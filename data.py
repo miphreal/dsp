@@ -1,7 +1,15 @@
 # coding=utf-8
+import os
 from collections import namedtuple
 from struct import Struct
 
+from lib.log import get_logger
+from lib.i18n import gettext as _
+
+logger = get_logger('dsp.data')
+
+DATA_FILE_TYPE = '.bin'
+DATA_GROUP_TYPE = '.txt'
 
 HEADER_DATA_FORMAT = (
     '4s'    # сигнатура файла TMB1
@@ -38,11 +46,29 @@ SignalHeader = namedtuple('SignalHeader', (
 ))
 
 
-class SignalDate(object):
+class SignalData(object):
     def __init__(self, file_name):
-        with open(file_name, 'rb') as f:
+        self.file_name = file_name
+        with open(self.file_name, 'rb') as f:
             self.data = f.read()
 
         header = Struct(HEADER_DATA_FORMAT)
         self.header = SignalHeader(*header.unpack(self.data[:header.size]))
         self.raw_signal = self.data[header.size:]
+
+        logger.info(_('File is loaded: %s') % file_name)
+        logger.info(_('File info: %s') % repr(self.header))
+
+
+def data_factory(file_name):
+    files = []
+    if file_name.endswith(DATA_FILE_TYPE):
+        files.append(file_name)
+    elif file_name.endswith(DATA_GROUP_TYPE):
+        with open(file_name) as group:
+            for line in group:
+                line = line.strip()
+                if line.endswith(DATA_FILE_TYPE) and not os.path.isabs(line):
+                        files.append(os.path.join(os.path.dirname(file_name), line))
+
+    return [SignalData(f) for f in files]
