@@ -3,7 +3,6 @@
 Main Window. It contains basic UI.
 """
 
-
 import os
 
 import wx
@@ -11,10 +10,13 @@ import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
-
-import settings
-from data import data_factory
+from data import data_factory, SOURCE_DATA_TYPES_LINE
 from lib.i18n import gettext as _
+from lib.log import get_logger
+from visualizer import VISUALIZERS
+
+
+logger = get_logger('dsp.main_window')
 
 
 class MainWindow(wx.Frame):
@@ -28,13 +30,19 @@ class MainWindow(wx.Frame):
         self.create_status_bar()
         self.create_main_panel()
 
+        self.Bind(wx.EVT_SIZE, self._redraw)
+
         self.Centre()
-        self.Show()
+        self.Show(True)
 
         self.data = None
 
     ##
     # Interface building
+    def _redraw(self, event):
+        if self.canvas:
+            self.canvas.SetSize((1000, 700))
+            logger.info('Redraw443')
 
     def create_menu(self):
         self.menu_bar = wx.MenuBar()
@@ -49,6 +57,9 @@ class MainWindow(wx.Frame):
 
         menu_signal = wx.Menu()
         m_info = menu_signal.Append(-1, _('Signal Info'))
+        menu_file.AppendSeparator()
+        for visualiser in VISUALIZERS:
+            menu_signal.Append(-1, visualiser.visualizer_name)
         self.menu_bar.Append(menu_signal, _('Signal'))
 
         menu_about = wx.Menu()
@@ -77,7 +88,7 @@ class MainWindow(wx.Frame):
 
 
         def f(t):
-            return np.exp(-t) * np.cos(2*np.pi*t)
+            return np.exp(-t) * np.cos(2 * np.pi * t)
 
         t1 = np.arange(0.0, 5.0, 0.1)
         t2 = np.arange(0.0, 5.0, 0.02)
@@ -86,7 +97,7 @@ class MainWindow(wx.Frame):
         plt.plot(t1, f(t1), 'bo', t2, f(t2), 'k')
 
         plt = self.fig.add_subplot(312)
-        plt.plot(t2, np.cos(2*np.pi*t2), 'r--')
+        plt.plot(t2, np.cos(2 * np.pi * t2), 'r--')
 
         mu, sigma = 100, 15
         x = mu + sigma * np.random.randn(10000)
@@ -115,7 +126,7 @@ class MainWindow(wx.Frame):
             message=_('Open data source'),
             defaultDir=os.getcwd(),
             defaultFile='',
-            wildcard=settings.SOURCE_DATA_TYPES_LINE,
+            wildcard=SOURCE_DATA_TYPES_LINE,
             style=wx.OPEN)
 
         if dlg.ShowModal() == wx.ID_OK:

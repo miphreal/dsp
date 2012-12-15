@@ -6,10 +6,16 @@ from struct import Struct
 from lib.log import get_logger
 from lib.i18n import gettext as _
 
+
 logger = get_logger('dsp.data')
 
 DATA_FILE_TYPE = '.bin'
 DATA_GROUP_TYPE = '.txt'
+SOURCE_DATA_TYPES = {
+    '*.bin': _('Channel Data Source'),
+    '*.txt': _('Channels Source Bundle'),
+    }
+SOURCE_DATA_TYPES_LINE = '|'.join('%s|%s' % (hint, ext) for ext, hint in SOURCE_DATA_TYPES.items())
 
 HEADER_DATA_FORMAT = (
     '4s'    # сигнатура файла TMB1
@@ -25,9 +31,8 @@ HEADER_DATA_FORMAT = (
     'I'     # число принятых блоков(принято системой): 4 байта, целое (реально принятое число блоков)
     'f'     # максимальное значение принятых данных: 4 байта, вещественное (максимальное значение  сигнала)
     'f'     # минимальное значение принятых данных: 4 байта, вещественное (минимальное значение  сигнала)
-            # далее идут данные в формате 4 байта, вещественное число для одного дискретного значения сигнала.
-)
-
+    # далее идут данные в формате 4 байта, вещественное число для одного дискретного значения сигнала.
+    )
 
 SignalHeader = namedtuple('SignalHeader', (
     'signature',
@@ -43,7 +48,7 @@ SignalHeader = namedtuple('SignalHeader', (
     'system_rcved_blocks',
     'max_value',
     'min_value',
-))
+    ))
 
 
 class SignalData(object):
@@ -69,6 +74,6 @@ def data_factory(file_name):
             for line in group:
                 line = line.strip()
                 if line.endswith(DATA_FILE_TYPE) and not os.path.isabs(line):
-                        files.append(os.path.join(os.path.dirname(file_name), line))
+                    files.append(os.path.join(os.path.dirname(file_name), line))
 
     return [SignalData(f) for f in files]
