@@ -6,14 +6,13 @@ Main Window. It contains basic UI.
 import os
 
 import wx
-import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
 from data import data_factory, SOURCE_DATA_TYPES_LINE
 from lib.i18n import gettext as _
 from lib.log import get_logger
-from visualizer import VISUALIZERS
+from visualizer import VISUALIZERS, TestVisualizer
 
 
 logger = get_logger('dsp.main_window')
@@ -30,20 +29,14 @@ class MainWindow(wx.Frame):
         self.create_status_bar()
         self.create_main_panel()
 
-        self.Bind(wx.EVT_SIZE, self._redraw)
-
         self.Centre()
         self.Show(True)
 
         self.data = None
+        self.visualizer = None
 
     ##
     # Interface building
-    def _redraw(self, event):
-        if self.canvas:
-            self.canvas.SetSize((1000, 700))
-            logger.info('Redraw443')
-
     def create_menu(self):
         self.menu_bar = wx.MenuBar()
 
@@ -57,7 +50,7 @@ class MainWindow(wx.Frame):
 
         menu_signal = wx.Menu()
         m_info = menu_signal.Append(-1, _('Signal Info'))
-        menu_file.AppendSeparator()
+        menu_signal.AppendSeparator()
         for visualiser in VISUALIZERS:
             menu_signal.Append(-1, visualiser.visualizer_name)
         self.menu_bar.Append(menu_signal, _('Signal'))
@@ -85,36 +78,7 @@ class MainWindow(wx.Frame):
         self.panel = wx.Panel(self)
         self.dpi = 100
         self.fig = Figure(dpi=self.dpi, facecolor='w')
-
-
-        def f(t):
-            return np.exp(-t) * np.cos(2 * np.pi * t)
-
-        t1 = np.arange(0.0, 5.0, 0.1)
-        t2 = np.arange(0.0, 5.0, 0.02)
-
-        plt = self.fig.add_subplot(311)
-        plt.plot(t1, f(t1), 'bo', t2, f(t2), 'k')
-
-        plt = self.fig.add_subplot(312)
-        plt.plot(t2, np.cos(2 * np.pi * t2), 'r--')
-
-        mu, sigma = 100, 15
-        x = mu + sigma * np.random.randn(10000)
-
-        plt = self.fig.add_subplot(313, xlabel='Smarts', ylabel='Probability')
-        # the histogram of the data
-        n, bins, patches = plt.hist(x, 50, normed=1, facecolor='g', alpha=0.75)
-
-        plt.set_title('Histogram of IQ')
-        plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
-
-        plt.axis([40, 160, 0, 0.03])
-        plt.grid(True)
-
-        self.fig.tight_layout()
         self.canvas = FigCanvas(self.panel, -1, self.fig)
-        self.canvas.draw()
 
     ##
     # Event handling
@@ -132,13 +96,14 @@ class MainWindow(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.data = data_factory(path)
+            self.visualizer = TestVisualizer(self.canvas, self.data, self)
 
     def on_export_image(self, event):
         file_choices = "PNG (*.png)|*.png"
 
         dlg = wx.FileDialog(
             self,
-            message="Save plot as...",
+            message=_("Save plot as..."),
             defaultDir=os.getcwd(),
             defaultFile="plot.png",
             wildcard=file_choices,

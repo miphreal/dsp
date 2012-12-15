@@ -12,8 +12,8 @@ logger = get_logger('dsp.data')
 DATA_FILE_TYPE = '.bin'
 DATA_GROUP_TYPE = '.txt'
 SOURCE_DATA_TYPES = {
-    '*.bin': _('Channel Data Source'),
-    '*.txt': _('Channels Source Bundle'),
+    '*.bin': _('Channel Data Source (*.bin)'),
+    '*.txt': _('Channels Source Bundle (*.txt)'),
     }
 SOURCE_DATA_TYPES_LINE = '|'.join('%s|%s' % (hint, ext) for ext, hint in SOURCE_DATA_TYPES.items())
 
@@ -48,7 +48,7 @@ SignalHeader = namedtuple('SignalHeader', (
     'system_rcved_blocks',
     'max_value',
     'min_value',
-    ))
+))
 
 
 class SignalData(object):
@@ -65,6 +65,11 @@ class SignalData(object):
         logger.info(_('File info: %s') % repr(self.header))
 
 
+class SignalsDataSet(object):
+    def __init__(self, files):
+        self.signals = [SignalData(f) for f in files]
+
+
 def data_factory(file_name):
     files = []
     if file_name.endswith(DATA_FILE_TYPE):
@@ -76,4 +81,4 @@ def data_factory(file_name):
                 if line.endswith(DATA_FILE_TYPE) and not os.path.isabs(line):
                     files.append(os.path.join(os.path.dirname(file_name), line))
 
-    return [SignalData(f) for f in files]
+    return SignalsDataSet(files=files)
