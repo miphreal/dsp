@@ -3,6 +3,8 @@
 Set of classes to represent the data
 """
 import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
 from lib.i18n import gettext as _
 
@@ -14,9 +16,14 @@ class BaseVisualizer(object):
     visualizer_name = _('Base Visualizer')
 
     def __init__(self, canvas, data, parent_frame):
-        self.canvas = canvas
+        self.canvas_panel = canvas
         self.data = data
         self.frame = parent_frame
+        self.events = self.frame.events
+
+        self.dpi = 100
+        self.fig = Figure(dpi=self.dpi, facecolor='w')
+        self.canvas = FigCanvas(self.canvas_panel, -1, self.fig)
 
         self.process()
         self.draw()
@@ -26,6 +33,10 @@ class BaseVisualizer(object):
 
     def process(self):
         """Calculates needed information"""
+
+    def print_figure(self, path):
+        """Export canvas into the file ``path``"""
+        self.canvas.print_figure(path, dpi=self.dpi)
 
 
 class TestVisualizer(BaseVisualizer):
@@ -42,7 +53,7 @@ class TestVisualizer(BaseVisualizer):
 #        plt.plot(t1, f(t1), 'bo', t2, f(t2), 'k')
 
         plt = self.canvas.figure.add_subplot(111)
-        plt.plot(self.data[0].float_data, 'k-')
+        plt.plot(self.data[0].float_data[30], 'k-')
 
 #        mu, sigma = 100, 15
 #        x = mu + sigma * np.random.randn(10000)
@@ -59,10 +70,6 @@ class TestVisualizer(BaseVisualizer):
 
         self.canvas.figure.tight_layout()
         self.canvas.draw()
-
-
-class ParametersVisualizer(BaseVisualizer):
-    visualizer_name = _('Signal Info')
 
 
 # Register

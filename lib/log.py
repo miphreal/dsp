@@ -6,13 +6,16 @@ Logging system
 import logging
 import sys
 
+from lib.event import app_events
 
-_subscribers = []
+
+LOGGER_EVENT = 'logging:log'
+
 
 class LogListener(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
-        map(lambda func: func(msg), _subscribers)
+        app_events.trigger(LOGGER_EVENT, msg)
 
 
 def get_logger(name=None):
@@ -31,14 +34,7 @@ def setup(level=logging.DEBUG, FORMAT=u'%(asctime)-15s - %(levelname)s:%(name)-1
     logger.addHandler(listener)
 
 def subscribe(func):
-    """
-    `func` has following format:
-        def my_func(msg): pass
-    """
-    global _subscribers
-    if callable(func) and func not in _subscribers:
-        _subscribers.append(func)
+    app_events.on(LOGGER_EVENT, func)
 
 def unsubscribe(func):
-    global _subscribers
-    _subscribers = filter(lambda f: f is not func, _subscribers)
+    app_events.off(LOGGER_EVENT, func)

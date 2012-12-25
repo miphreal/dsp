@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-16 01:08+0300\n"
+"POT-Creation-Date: 2012-12-25 21:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/miph/Develop/dsp/visualizer.py:14
+#: /home/miph/Develop/dsp/visualizer.py:16
 msgid "Base Visualizer"
 msgstr ""
 
-#: /home/miph/Develop/dsp/visualizer.py:32
+#: /home/miph/Develop/dsp/visualizer.py:42
 msgid "Test Visualizer"
 msgstr ""
 
-#: /home/miph/Develop/dsp/visualizer.py:65
-#: /home/miph/Develop/dsp/ui/frames/main.py:52
+#: /home/miph/Develop/dsp/visualizer.py:75
+#: /home/miph/Develop/dsp/ui/frames/main.py:102
 msgid "Signal Info"
 msgstr ""
 
@@ -48,39 +48,55 @@ msgstr ""
 msgid "File info: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:22
+#: /home/miph/Develop/dsp/ui/frames/main.py:23
 msgid "Digital Signal Processing"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:44
-#: /home/miph/Develop/dsp/ui/frames/main.py:90
+#: /home/miph/Develop/dsp/ui/frames/main.py:56
+#: /home/miph/Develop/dsp/ui/frames/main.py:113
 msgid "Open data source"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:46
+#: /home/miph/Develop/dsp/ui/frames/main.py:58
 msgid "Save plot"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:48
+#: /home/miph/Develop/dsp/ui/frames/main.py:60
 msgid "Exit"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:49
+#: /home/miph/Develop/dsp/ui/frames/main.py:61
 msgid "File"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:56
+#: /home/miph/Develop/dsp/ui/frames/main.py:64
+msgid "Signal Info Panel"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:70
 msgid "Signal"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:59
+#: /home/miph/Develop/dsp/ui/frames/main.py:73
 msgid "Author"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:60
+#: /home/miph/Develop/dsp/ui/frames/main.py:74
 msgid "About"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:106
+#: /home/miph/Develop/dsp/ui/frames/main.py:101
+msgid "Files"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:103
+msgid "Values"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:104
+msgid "Property"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:131
 msgid "Save plot as..."
 msgstr ""
