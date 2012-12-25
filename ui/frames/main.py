@@ -2,14 +2,14 @@
 """
 Main Window. It contains basic UI.
 """
-from functools import partial
-
 import os
+from functools import partial
 
 import wx
 
+from constants import events
 from data import data_factory, SOURCE_DATA_TYPES_LINE
-from lib.event import app_events
+from lib.event import trigger
 from lib.i18n import gettext as _
 from lib.log import get_logger
 from ui.panels import info_panels
@@ -25,22 +25,23 @@ class MainWindow(wx.Frame):
 
     def __init__(self):
         wx.Frame.__init__(self, None, -1, self.title)
-        # to handle/trigger app events
-        # A little convention:
-        # namespaces: 'visualizer:'
-        self.events = app_events
-
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.create_menu()
         self.create_tool_bar()
 #        self.create_status_bar()
 
+        self.splitter = wx.SplitterWindow(self, -1, style=wx.SP_3D | wx.SP_BORDER | wx.SP_LIVE_UPDATE)
+
         self.create_canvas_panel()
-        self.sizer.Add(self.canvas_panel, 3, wx.EXPAND, 0)
+#        self.sizer.Add(self.canvas_panel, 3, wx.EXPAND, 0)
 
         self.create_info_panel()
-        self.sizer.Add(self.info_panel, 1, wx.EXPAND, 0)
+#        self.sizer.Add(self.info_panel, 1, wx.EXPAND, 0)
+
+        self.splitter.SplitHorizontally(self.canvas_panel, self.info_panel)
+        self.splitter.SetMinimumPaneSize(100)
+        self.sizer.Add(self.splitter, 1, wx.EXPAND, 0)
 
         self.SetSizer(self.sizer)
         self.sizer.Fit(self)
@@ -67,6 +68,7 @@ class MainWindow(wx.Frame):
 
         menu_signal = wx.Menu()
         m_info = menu_signal.Append(-1, _('Signal Info Panel'), kind=wx.ITEM_CHECK)
+        m_info.Check()
         menu_signal.AppendSeparator()
         for visualiser in VISUALIZERS:
             item = menu_signal.Append(-1, visualiser.visualizer_name)
@@ -94,20 +96,22 @@ class MainWindow(wx.Frame):
         self.status_bar = self.CreateStatusBar()
 
     def create_canvas_panel(self):
-        self.canvas_panel = CanvasPanel(main_frame=self, parent=self)
+        self.canvas_panel = CanvasPanel(main_frame=self, parent=self.splitter)
 
     def create_info_panel(self):
-        self.info_panel = wx.Notebook(self, -1, style=0)
+        self.info_panel = wx.Notebook(self.splitter, -1, style=0)
         self.info_panel.Hide()
         self.info_panel_files = info_panels.Files(main_frame=self, parent=self.info_panel)
         self.info_panel_signal_info = info_panels.SignalInfo(main_frame=self, parent=self.info_panel)
         self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
         self.info_panel_properties = info_panels.Properties(main_frame=self, parent=self.info_panel)
+        self.info_panel_log = info_panels.Log(main_frame=self, parent=self.info_panel)
 
         self.info_panel.AddPage(self.info_panel_files, _('Files'))
         self.info_panel.AddPage(self.info_panel_signal_info, _('Signal Info'))
         self.info_panel.AddPage(self.info_panel_values, _('Values'))
         self.info_panel.AddPage(self.info_panel_properties, _('Property'))
+        self.info_panel.AddPage(self.info_panel_log, _('Log'))
 
     ##
     # Event handling
@@ -125,6 +129,7 @@ class MainWindow(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.data = data_factory(path)
+            trigger(events.EVENT_DATA_LOADED, self.data)
 
     def on_choose_visualizer(self, event, visualizer_class=None):
         self.visualizer = visualizer_class(self.canvas_panel, self.data, self) if visualizer_class is not None else None
@@ -148,7 +153,11 @@ class MainWindow(wx.Frame):
         self.Destroy()
 
     def on_info_panel(self, event):
-        self.info_panel.Show(not self.info_panel.IsShown())
+        self.info_panel.Show(event.Int)
+        if event.Int:
+            self.splitter.SplitHorizontally(self.canvas_panel, self.info_panel)
+        else:
+            self.splitter.Unsplit(self.info_panel)
 
 
 

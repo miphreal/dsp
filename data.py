@@ -66,6 +66,9 @@ class SignalData(object):
         logger.info(_('File is loaded: %s') % file_name)
         logger.info(_('File info: %s') % repr(self.header))
 
+    def __unicode__(self):
+        return self.file_name
+
 
 class SignalsDataSet(list):
     def __init__(self, files, *args, **kwargs):
@@ -84,6 +87,10 @@ def data_factory(file_name):
             for line in group:
                 line = line.strip()
                 if line.endswith(DATA_FILE_TYPE) and not os.path.isabs(line):
-                    files.append(os.path.join(os.path.dirname(file_name), line))
+                    line = os.path.join(os.path.dirname(file_name), line)
+                if not os.path.exists(line):
+                    logger.error(_('File does not exist: %s') % line)
+                    continue
+                files.append(line)
 
     return SignalsDataSet(files=files)

@@ -173,6 +173,10 @@ class Events(dict):
 
 # Registers common app events
 app_events = Events()
+trigger = app_events.trigger
+on = app_events.on
+off = app_events.off
+opts = app_events.options
 
 
 def test():

@@ -2,10 +2,10 @@
 """
 Set of classes to represent the data
 """
-import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
+from lib.event import app_events
 from lib.i18n import gettext as _
 
 
@@ -14,15 +14,21 @@ VISUALIZERS = []
 
 class BaseVisualizer(object):
     visualizer_name = _('Base Visualizer')
+    DPI = 100
+    FIGURE_HEIGHT = 2.0
 
-    def __init__(self, canvas, data, parent_frame):
-        self.canvas_panel = canvas
+    def __init__(self, canvas_panel, data, parent_frame):
+        self.canvas_panel = canvas_panel
         self.data = data
         self.frame = parent_frame
-        self.events = self.frame.events
+        self.events = app_events
 
-        self.dpi = 100
-        self.fig = Figure(dpi=self.dpi, facecolor='w')
+        self.dpi = self.DPI
+        self.figure_height = self.FIGURE_HEIGHT
+
+        size = self.canvas_panel.Size
+        figsize = (float(size[0])/self.dpi, self.figure_height * len(self.data))
+        self.fig = Figure(dpi=self.dpi, facecolor='w', figsize=figsize)
         self.canvas = FigCanvas(self.canvas_panel, -1, self.fig)
 
         self.process()
@@ -53,7 +59,7 @@ class TestVisualizer(BaseVisualizer):
 #        plt.plot(t1, f(t1), 'bo', t2, f(t2), 'k')
 
         plt = self.canvas.figure.add_subplot(111)
-        plt.plot(self.data[0].float_data[30], 'k-')
+        plt.plot(self.data[0].float_data, 'k-')
 
 #        mu, sigma = 100, 15
 #        x = mu + sigma * np.random.randn(10000)
@@ -72,7 +78,20 @@ class TestVisualizer(BaseVisualizer):
         self.canvas.draw()
 
 
+class SignalsMapVisualizer(BaseVisualizer):
+    visualizer_name = _('Signals Map Visualizer')
+
+    def draw(self):
+        for i, data in enumerate(self.data, 1):
+            plt = self.canvas.figure.add_subplot(len(self.data), 1, i)
+            plt.plot(data.float_data, 'k-')
+
+        self.canvas.figure.tight_layout()
+        self.canvas_panel.update_scroll(self.canvas.Size)
+        self.canvas.draw()
+
 # Register
 VISUALIZERS.extend([
-    TestVisualizer
+    TestVisualizer,
+    SignalsMapVisualizer,
 ])
