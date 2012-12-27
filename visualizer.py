@@ -4,8 +4,9 @@ Set of classes to represent the data
 """
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
+from constants import events
 
-from lib.event import app_events
+from lib.event import app_events, trigger, on
 from lib.i18n import gettext as _
 
 
@@ -18,6 +19,8 @@ class BaseVisualizer(object):
     FIGURE_HEIGHT = 2.0
 
     def __init__(self, canvas_panel, data, parent_frame):
+        trigger(events.EVENT_VISUALIZER_DRAW, visualizer=self)
+
         self.canvas_panel = canvas_panel
         self.data = data
         self.frame = parent_frame
@@ -34,8 +37,19 @@ class BaseVisualizer(object):
         self.process()
         self.draw()
 
+        on(events.EVENT_VISUALIZER_DRAW, self.on_any_visualizer_draw)
+
+    def on_any_visualizer_draw(self, visualizer):
+        if visualizer is not self:
+            self.clear()
+
     def draw(self):
         """Visualizes calculated data"""
+
+    def clear(self):
+        """Clear canvas"""
+        self.canvas.figure.clear()
+        self.canvas.draw()
 
     def process(self):
         """Calculates needed information"""
@@ -82,6 +96,8 @@ class SignalsMapVisualizer(BaseVisualizer):
     visualizer_name = _('Signals Map Visualizer')
 
     def draw(self):
+
+
         for i, data in enumerate(self.data, 1):
             plt = self.canvas.figure.add_subplot(len(self.data), 1, i)
             plt.plot(data.float_data, 'k-')

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-25 21:24+0300\n"
+"POT-Creation-Date: 2012-12-27 01:41+0300\n"
 "PO-Revision-Date: 2012-12-13 00:29+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -22,82 +22,156 @@ msgstr ""
 msgid "Base Visualizer"
 msgstr "Базовый отрисовщик данных"
 
-#: /home/miph/Develop/dsp/visualizer.py:42
+#: /home/miph/Develop/dsp/visualizer.py:49
 msgid "Test Visualizer"
 msgstr "Тестовый отрисовщик"
 
-#: /home/miph/Develop/dsp/visualizer.py:75
-#: /home/miph/Develop/dsp/ui/frames/main.py:102
-msgid "Signal Info"
-msgstr "Информация о сигнале"
+#: /home/miph/Develop/dsp/visualizer.py:82
+msgid "Signals Map Visualizer"
+msgstr "Общий вид сигналов"
 
 #: /home/miph/Develop/dsp/data.py:15
 msgid "Channel Data Source (*.bin)"
-msgstr "Группа каналов (*.bin)"
+msgstr "Канал (*.bin)"
 
 #: /home/miph/Develop/dsp/data.py:16
 msgid "Channels Source Bundle (*.txt)"
 msgstr "Группа каналов (*.txt)"
 
-#: /home/miph/Develop/dsp/data.py:66
+#: /home/miph/Develop/dsp/data.py:53
+msgid "signature"
+msgstr "Сигнатура"
+
+#: /home/miph/Develop/dsp/data.py:53
+msgid "channel_count"
+msgstr "Количество каналов"
+
+#: /home/miph/Develop/dsp/data.py:53
+msgid "fetch_size_per_channel"
+msgstr "Размер выборки на один канал"
+
+#: /home/miph/Develop/dsp/data.py:53
+msgid "spectral_lines_count"
+msgstr "Количество спектральных линий"
+
+#: /home/miph/Develop/dsp/data.py:53
+msgid "slice_freq"
+msgstr "Частота среза"
+
+#: /home/miph/Develop/dsp/data.py:54
+msgid "freq_dimension"
+msgstr "Частотное разрешение"
+
+#: /home/miph/Develop/dsp/data.py:54
+msgid "rcv_time"
+msgstr "Время приёма блока данных"
+
+#: /home/miph/Develop/dsp/data.py:54
+msgid "total_rcv_time"
+msgstr "Общее время приёма данных"
+
+#: /home/miph/Develop/dsp/data.py:54
+msgid "blocks_count"
+msgstr "Количество принятых блоков"
+
+#: /home/miph/Develop/dsp/data.py:54
+msgid "data_size"
+msgstr ""
+"Размер данных "
+"(количество дискретных отсчетов в файле даных)"
+
+#: /home/miph/Develop/dsp/data.py:55
+msgid "system_rcved_blocks"
+msgstr ""
+"Число принятых блоков(принято системой)"
+
+#: /home/miph/Develop/dsp/data.py:55
+msgid "max_value"
+msgstr "Максимальное значение принятых данных"
+
+#: /home/miph/Develop/dsp/data.py:55
+msgid "min_value"
+msgstr "Минимальное значение принятых данных"
+
+#: /home/miph/Develop/dsp/data.py:69
 #, python-format
 msgid "File is loaded: %s"
 msgstr "Файл загружен: %s"
 
-#: /home/miph/Develop/dsp/data.py:67
+#: /home/miph/Develop/dsp/data.py:70
 #, python-format
 msgid "File info: %s"
 msgstr "Информация о файле: %s"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:23
+#: /home/miph/Develop/dsp/data.py:95
+#, python-format
+msgid "File does not exist: %s"
+msgstr "Указанный файл не существует: %s"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:24
 msgid "Digital Signal Processing"
 msgstr "Цифровая обработка сигнала"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:56
-#: /home/miph/Develop/dsp/ui/frames/main.py:113
+#: /home/miph/Develop/dsp/ui/frames/main.py:59
+#: /home/miph/Develop/dsp/ui/frames/main.py:119
 msgid "Open data source"
 msgstr "Открыть файлы с данными"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:58
+#: /home/miph/Develop/dsp/ui/frames/main.py:61
 msgid "Save plot"
 msgstr "Экспорт графика"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:60
+#: /home/miph/Develop/dsp/ui/frames/main.py:63
 msgid "Exit"
 msgstr "Выход"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:61
+#: /home/miph/Develop/dsp/ui/frames/main.py:64
 msgid "File"
 msgstr "Файл"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:64
+#: /home/miph/Develop/dsp/ui/frames/main.py:67
 msgid "Signal Info Panel"
 msgstr "Информационная панель"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:70
+#: /home/miph/Develop/dsp/ui/frames/main.py:74
 msgid "Signal"
 msgstr "Сигнал"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:73
+#: /home/miph/Develop/dsp/ui/frames/main.py:77
 msgid "Author"
 msgstr "Автор"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:74
+#: /home/miph/Develop/dsp/ui/frames/main.py:78
 msgid "About"
 msgstr "О программе"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:101
-msgid "Files"
-msgstr "Файлы"
+#: /home/miph/Develop/dsp/ui/frames/main.py:105
+msgid "Signal Info"
+msgstr "Информация о сигнале"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:103
+#: /home/miph/Develop/dsp/ui/frames/main.py:106
 msgid "Values"
 msgstr "Значения"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:104
+#: /home/miph/Develop/dsp/ui/frames/main.py:107
 msgid "Property"
 msgstr "Параметры показа"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:131
+#: /home/miph/Develop/dsp/ui/frames/main.py:108
+msgid "Log"
+msgstr "Лог"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:138
 msgid "Save plot as..."
 msgstr "Экспорт графика"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:50
+msgid "Parameter"
+msgstr "Параметр"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:51
+msgid "Value"
+msgstr "Значение"
+
+#~ msgid "Files"
+#~ msgstr "Файлы"

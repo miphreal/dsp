@@ -55,8 +55,8 @@ class Events(dict):
     ES_PROPAGATE_DEFAULT = ES_PROPAGATE_TO_TOP|ES_PROPAGATE_CURRENT
 
     # Handlers call order
-    CO_FROM_THE_END = 1 # current 3: [h5 h4 h3 h2 h1]
-    CO_FROM_CURRENT = 2 # current 3: [h3 h1 h2 h3 h4]
+    CO_FROM_THE_END = 1 # if current 3: [h5 h4 h3 h2 h1]
+    CO_FROM_CURRENT = 2 # if current 3: [h3 h1 h2 h3 h4]
     CO_FROM_THE_BEGIN = 3 # [h1 h2 h3 h4 h5]
     CO_DEFAULT = CO_FROM_CURRENT
 

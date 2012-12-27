@@ -34,10 +34,7 @@ class MainWindow(wx.Frame):
         self.splitter = wx.SplitterWindow(self, -1, style=wx.SP_3D | wx.SP_BORDER | wx.SP_LIVE_UPDATE)
 
         self.create_canvas_panel()
-#        self.sizer.Add(self.canvas_panel, 3, wx.EXPAND, 0)
-
         self.create_info_panel()
-#        self.sizer.Add(self.info_panel, 1, wx.EXPAND, 0)
 
         self.splitter.SplitHorizontally(self.canvas_panel, self.info_panel)
         self.splitter.SetMinimumPaneSize(100)
@@ -99,19 +96,18 @@ class MainWindow(wx.Frame):
         self.canvas_panel = CanvasPanel(main_frame=self, parent=self.splitter)
 
     def create_info_panel(self):
-        self.info_panel = wx.Notebook(self.splitter, -1, style=0)
-        self.info_panel.Hide()
-        self.info_panel_files = info_panels.Files(main_frame=self, parent=self.info_panel)
+        self.info_panel = wx.Notebook(self.splitter, -1, style=wx.NB_LEFT)
         self.info_panel_signal_info = info_panels.SignalInfo(main_frame=self, parent=self.info_panel)
         self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
         self.info_panel_properties = info_panels.Properties(main_frame=self, parent=self.info_panel)
         self.info_panel_log = info_panels.Log(main_frame=self, parent=self.info_panel)
 
-        self.info_panel.AddPage(self.info_panel_files, _('Files'))
         self.info_panel.AddPage(self.info_panel_signal_info, _('Signal Info'))
         self.info_panel.AddPage(self.info_panel_values, _('Values'))
         self.info_panel.AddPage(self.info_panel_properties, _('Property'))
         self.info_panel.AddPage(self.info_panel_log, _('Log'))
+
+        self.info_panel.SetInitialSize((100, 120))
 
     ##
     # Event handling
@@ -129,7 +125,7 @@ class MainWindow(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.data = data_factory(path)
-            trigger(events.EVENT_DATA_LOADED, self.data)
+            trigger(events.EVENT_DATA_LOADED, data=self.data)
 
     def on_choose_visualizer(self, event, visualizer_class=None):
         self.visualizer = visualizer_class(self.canvas_panel, self.data, self) if visualizer_class is not None else None

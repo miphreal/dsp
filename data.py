@@ -50,6 +50,9 @@ SignalHeader = namedtuple('SignalHeader', (
     'min_value',
 ))
 
+CONSTS = (_('signature'), _('channel_count'), _('fetch_size_per_channel'), _('spectral_lines_count'), _('slice_freq'),
+          _('freq_dimension'), _('rcv_time'), _('total_rcv_time'), _('blocks_count'), _('data_size'),
+          _('system_rcved_blocks'), _('max_value'), _('min_value'))
 
 class SignalData(object):
     def __init__(self, file_name):
