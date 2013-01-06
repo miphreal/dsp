@@ -4,8 +4,10 @@ Set of panels to show state information
 """
 
 import wx
+from wx._windows import ColourDialog
 
 from constants import events
+from lib.config import app_config
 from lib.event import on, trigger
 from lib.i18n import gettext as _
 from lib.log import subscribe
@@ -13,6 +15,7 @@ from lib.log import subscribe
 
 class BaseInfo(wx.Panel):
     def __init__(self, main_frame, *args, **kwargs):
+        self.conf = app_config
         self.main_frame = main_frame
         super(BaseInfo, self).__init__(*args, **kwargs)
         self.sizer = self._get_sizer()
@@ -80,11 +83,108 @@ class SignalInfo(BaseInfo):
 
 
 class Values(BaseInfo):
-    pass
+    def _get_sizer(self):
+        return wx.BoxSizer(wx.HORIZONTAL)
+
+    def _init(self):
+        self.static_box_cursor = wx.StaticBox(self, label=_('Static Cursor'))
+        self.sizer.Add(self.static_box_cursor, 1, wx.EXPAND)
+
+        self.static_box_dynamic_cursor = wx.StaticBox(self, label=_('Dynamic Cursor'))
+        self.sizer.Add(self.static_box_dynamic_cursor, 1, wx.EXPAND)
 
 
 class Properties(BaseInfo):
-    pass
+    slider_label = _('Frame position: %s/%s')
+    zoom_label = _('Zoom: %s%%')
+
+    ZOOM_DIM = 10000
+
+    def _init(self):
+        self.max_data_size = 0
+
+        # init ui
+        self._create_slider()
+        self._create_zoom()
+        self._create_color_props()
+
+        # bind events
+        on(events.EVENT_DATA_LOADED, self.evt_on_data_load)
+        self.slider.Bind(wx.EVT_SCROLL_ENDSCROLL, self.evt_set_config_scroll_position)
+        self.slider.Bind(wx.EVT_SCROLL_THUMBTRACK, self.evt_update_scroll_label)
+        self.zoom.Bind(wx.EVT_SCROLL_ENDSCROLL, self.evt_set_config_zoom)
+        self.zoom.Bind(wx.EVT_SCROLL_THUMBTRACK, self.evt_update_zoom_label)
+
+        self.button_facecolor.Bind(wx.EVT_COLOURPICKER_CHANGED, self.evt_on_select_bg_colour)
+        self.button_static_cursor_color.Bind(wx.EVT_COLOURPICKER_CHANGED, self.evt_on_select_static_cursor_color)
+        self.button_dynamic_cursor_color.Bind(wx.EVT_COLOURPICKER_CHANGED, self.evt_on_select_dynamic_cursor_color)
+
+    def _create_slider(self):
+        self.slider_text = wx.StaticText(self, label=self.slider_label % (0, self.max_data_size))
+        self.slider = wx.Slider(self, value=0, maxValue=0)
+        self.sizer.Add(self.slider, 0, wx.EXPAND)
+        self.sizer.Add(self.slider_text, 0, wx.ALIGN_CENTER_HORIZONTAL)
+
+    def _create_zoom(self):
+        self.zoom_text = wx.StaticText(self, label=self.zoom_label % 1)
+        self.zoom = wx.Slider(self, minValue=1, maxValue=self.ZOOM_DIM, value=1)
+        self.sizer.Add(self.zoom_text, 0, wx.ALIGN_LEFT)
+        self.sizer.Add(self.zoom, 0, wx.EXPAND)
+    def _zoom_value_from(self, value): return float(value) / self.ZOOM_DIM * 100.0
+    def _zoom_value_to(self, value): return round(float(value) / self.max_data_size * self.ZOOM_DIM)
+
+    def _create_color_props(self):
+        self.colour_box = wx.StaticBox(self, label=_('Colours'))
+        self.colour_box_sizer = wx.StaticBoxSizer(self.colour_box)
+
+        self.colour_box_sizer.Add(wx.StaticText(self, label=_('Background Color:')), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.button_facecolor = wx.ColourPickerCtrl(self, col=self.conf.draw_facecolor)
+        self.colour_box_sizer.Add(self.button_facecolor, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.colour_box_sizer.AddSpacer(20)
+
+        self.colour_box_sizer.Add(wx.StaticText(self, label=_('Static Cursor Color:')), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.button_static_cursor_color = wx.ColourPickerCtrl(self, col=self.conf.draw_static_cursor_color)
+        self.colour_box_sizer.Add(self.button_static_cursor_color, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.colour_box_sizer.AddSpacer(20)
+
+        self.colour_box_sizer.Add(wx.StaticText(self, label=_('Dynamic Cursor Color:')), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.button_dynamic_cursor_color = wx.ColourPickerCtrl(self, col=self.conf.draw_dynamic_cursor_color)
+        self.colour_box_sizer.Add(self.button_dynamic_cursor_color, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.sizer.Add(self.colour_box_sizer, 0, wx.EXPAND)
+
+    def evt_on_data_load(self, *args, **kwargs):
+        data = self.data
+        if data:
+            self.max_data_size = data.max_data_size()
+            self.slider.SetMax(self.max_data_size)
+            self.slider.SetValue(self.conf.draw_page_size)
+            self.slider_text.SetLabel(self.slider_label % (self.slider.GetValue(), self.max_data_size))
+
+            self.zoom.SetValue(self._zoom_value_to(self.conf.draw_page_size))
+            self.zoom_text.SetLabel(self.zoom_label % self._zoom_value_to(self.zoom.GetValue()))
+
+
+    def evt_update_scroll_label(self, event):
+        self.slider_text.SetLabel(self.slider_label % (self.slider.GetValue(), self.max_data_size))
+
+    def evt_set_config_scroll_position(self, event):
+        self.conf.draw_position = self.slider.GetValue()
+
+    def evt_update_zoom_label(self, event):
+        self.zoom_text.SetLabel(self.zoom_label % self._zoom_value_from(self.zoom.GetValue()))
+
+    def evt_set_config_zoom(self, event):
+        self.conf.draw_page_size = self.zoom.GetValue() * self.max_data_size / self.ZOOM_DIM
+
+    def evt_on_select_bg_colour(self, event):
+        self.conf.draw_facecolor = '#{:02X}{:02X}{:02X}'.format(*event.Colour.Get())
+
+    def evt_on_select_static_cursor_color(self, event):
+        self.conf.draw_static_cursor_color = '#{:02X}{:02X}{:02X}'.format(*event.Colour.Get())
+
+    def evt_on_select_dynamic_cursor_color(self, event):
+        self.conf.draw_dynamic_cursor_color = '#{:02X}{:02X}{:02X}'.format(*event.Colour.Get())
 
 
 class Log(BaseInfo):

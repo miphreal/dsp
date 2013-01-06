@@ -9,9 +9,11 @@ import wx
 
 from constants import events
 from data import data_factory, SOURCE_DATA_TYPES_LINE
-from lib.event import trigger
+from lib.config import app_config
+from lib.event import trigger, on
 from lib.i18n import gettext as _
 from lib.log import get_logger
+from ui.frames.progress import ProgressWindow
 from ui.panels import info_panels
 from ui.panels.canvas_panel import CanvasPanel
 from visualizer import VISUALIZERS
@@ -19,13 +21,23 @@ from visualizer import VISUALIZERS
 
 logger = get_logger('dsp.main_window')
 
+DEFAULT_MAIN_CONFIG = {
+}
+trigger(events.DO_UPDATE_CONFIG, DEFAULT_MAIN_CONFIG)
+
 
 class MainWindow(wx.Frame):
     title = _('Digital Signal Processing')
 
     def __init__(self):
+        self.conf = app_config
+
         wx.Frame.__init__(self, None, -1, self.title)
+        self.progress_frame = ProgressWindow(self)
+
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.data = None
+        self.visualizer = None
 
         self.create_menu()
         self.create_tool_bar()
@@ -47,8 +59,6 @@ class MainWindow(wx.Frame):
         self.Maximize()
         self.Show(True)
 
-        self.data = None
-        self.visualizer = None
 
     ##
     # Interface building
@@ -90,7 +100,7 @@ class MainWindow(wx.Frame):
         pass
 
     def create_status_bar(self):
-        self.status_bar = self.CreateStatusBar()
+        self.status_bar = self.CreateStatusBar(2)
 
     def create_canvas_panel(self):
         self.canvas_panel = CanvasPanel(main_frame=self, parent=self.splitter)
@@ -107,7 +117,6 @@ class MainWindow(wx.Frame):
         self.info_panel.AddPage(self.info_panel_properties, _('Property'))
         self.info_panel.AddPage(self.info_panel_log, _('Log'))
 
-        self.info_panel.SetInitialSize((100, 120))
 
     ##
     # Event handling
@@ -154,8 +163,3 @@ class MainWindow(wx.Frame):
             self.splitter.SplitHorizontally(self.canvas_panel, self.info_panel)
         else:
             self.splitter.Unsplit(self.info_panel)
-
-
-
-
-

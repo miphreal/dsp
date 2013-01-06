@@ -10,6 +10,14 @@ Common app event constants
 EVENT_APP_STARTED = 'app:started'
 
 
+# CONFIG EVENTS
+EVENT_CHANGED_CONFIG = 'config:changed' # func(config)
+EVENT_CHANGED_PARAMETER = 'config:*:changed' # func(key, value) ~ config:key1:changed
+EVENT_CHANGED_PARAMETER_key = lambda k: EVENT_CHANGED_PARAMETER.replace('*', k)
+DO_UPDATE_CONFIG = 'config:do:update'   # func(config_dict)
+DO_SET_PARAMETER = 'config:do:set'      # func(key, value)
+
+
 # DATA EVENTS
 EVENT_DATA_LOADED = 'data:loaded'   # func(data)
 

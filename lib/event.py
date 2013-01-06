@@ -71,6 +71,7 @@ class Events(dict):
 
     def __init__(self, *args, **kwargs):
         super(Events, self).__init__(*args, **kwargs)
+        self._re_cache = {}
 
     def _generate_events(self, event_name, events_scope=ES_PROPAGATE_DEFAULT):
         events = []
@@ -101,9 +102,15 @@ class Events(dict):
         return chain(*[self.get(event, []) for event in events])
 
     def _generate_re(self, event_name):
-        safe = '.+'.join(re.escape(event_name).split('\\'+self.WILD_CARD))
-        safe = '[^{}]+'.format(self.DELIMITER).join(safe.split('\\'+self.SOFT_WILD_CARD))
-        return re.compile(r'^{safe}$'.format(safe=safe), re.UNICODE)
+        re_cached = self._re_cache.get(event_name)
+        if re_cached is None:
+            safe = '.+'.join(re.escape(event_name).split('\\'+self.WILD_CARD))
+            safe = '[^{}]+'.format(self.DELIMITER).join(safe.split('\\'+self.SOFT_WILD_CARD))
+            self._re_cache[event_name] = re_cached = re.compile(r'^{safe}$'.format(safe=safe), re.UNICODE)
+        return re_cached
+
+    def _is_re(self, event_name):
+        return self.WILD_CARD in event_name or self.SOFT_WILD_CARD in event_name
 
     def _prepare_events(self, events):
         events = [events] if isinstance(events, basestring) else (events or [])
@@ -111,9 +118,17 @@ class Events(dict):
 
         for event in events:
             event = event.strip()
-            if self.WILD_CARD in event or self.SOFT_WILD_CARD in event:
+            matched = []
+            if self._is_re(event):
                 matcher = self._generate_re(event)
-                prepared_events.extend(sorted(filter(matcher.match, self)))
+                matched.extend(filter(matcher.match, self))
+            # check reverse matching
+            matched.extend(
+                filter(lambda self_event: self._is_re(self_event) and self._generate_re(self_event).match(event),
+                       self)
+            )
+
+            prepared_events.extend(sorted(matched))
             prepared_events.append(event)
 
         return prepared_events
@@ -144,12 +159,12 @@ class Events(dict):
             call_order=call_order,
             events_scope=propagate
         )
-        executed = set()
+        executed = []
         results = []
         for handler in chain(*map(get_handlers_func, events)):
             if handler not in executed or unique_call == self.TB_CALL_EVERY:
                 results.append(handler(*args, **kwargs))
-                executed.add(handler)
+                executed.append(handler)
         return results
 
     def on(self, event_or_events, handler_or_handlers):

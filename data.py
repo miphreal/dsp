@@ -1,10 +1,12 @@
 # coding=utf-8
+import copy
 import os
 from collections import namedtuple
 from struct import Struct, unpack
 
 from lib.log import get_logger
 from lib.i18n import gettext as _
+from ui.frames.progress import progress_tick, progress_new, progress_release
 
 
 logger = get_logger('dsp.data')
@@ -55,30 +57,59 @@ CONSTS = (_('signature'), _('channel_count'), _('fetch_size_per_channel'), _('sp
           _('system_rcved_blocks'), _('max_value'), _('min_value'))
 
 class SignalData(object):
-    def __init__(self, file_name):
+    def __init__(self, file_name=None):
         self.file_name = file_name
-        with open(self.file_name, 'rb') as f:
-            self.data = f.read()
 
-        header = Struct(HEADER_DATA_FORMAT)
-        self.header = SignalHeader(*header.unpack(self.data[:header.size]))
-        self.raw_signal = self.data[header.size:]
+        if self.file_name:
+            with open(self.file_name, 'rb') as f:
+                self.data = f.read()
 
-        self.float_data = [unpack('f', self.raw_signal[i:i+4]) for i in xrange(0, len(self.raw_signal)-4, 4)]
+            header = Struct(HEADER_DATA_FORMAT)
+            self.header = SignalHeader(*header.unpack(self.data[:header.size]))
+            self.raw_signal = self.data[header.size:]
 
-        logger.info(_('File is loaded: %s') % file_name)
-        logger.info(_('File info: %s') % repr(self.header))
+            self.float_data = [unpack('f', self.raw_signal[i:i+4]) for i in xrange(0, len(self.raw_signal)-4, 4)]
+
+            logger.info(_('File is loaded: %s') % file_name)
+            logger.info(_('File info: %s') % repr(self.header))
+            progress_tick()
+
+    def clone(self):
+        obj = SignalData()
+        obj.file_name = self.file_name
+        obj.data = copy.copy(self.data)
+        obj.header = copy.copy(self.header)
+        obj.raw_signal = copy.copy(self.raw_signal)
+        obj.float_data = copy.copy(self.float_data)
+
+        return obj
+
+    def slice(self, first, last):
+        obj = self.clone()
+        obj.float_data = obj.float_data[first:last]
+        return obj
 
     def __unicode__(self):
         return self.file_name
 
 
 class SignalsDataSet(list):
-    def __init__(self, files, *args, **kwargs):
+    def __init__(self, files=None, *args, **kwargs):
         super(SignalsDataSet, self).__init__(*args, **kwargs)
-        self.extend([SignalData(f) for f in files])
+        if files:
+            progress_new(len(files))
+            self.extend([SignalData(f) for f in files])
+            progress_release()
 
         self.signals = self
+
+    def slice(self, first, last):
+        obj = SignalsDataSet()
+        obj.extend([signal_data.slice(first, last) for signal_data in self.signals])
+        return obj
+
+    def max_data_size(self):
+        return max(data.header.data_size for data in self.signals)
 
 
 def data_factory(file_name):

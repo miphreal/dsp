@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-27 01:41+0300\n"
+"POT-Creation-Date: 2013-01-06 03:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,154 +17,188 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/miph/Develop/dsp/visualizer.py:16
+#: /home/miph/Develop/dsp/visualizer.py:31
 msgid "Base Visualizer"
 msgstr ""
 
-#: /home/miph/Develop/dsp/visualizer.py:49
-msgid "Test Visualizer"
+#: /home/miph/Develop/dsp/visualizer.py:147
+msgid "Clear Signals Map Visualizer"
 msgstr ""
 
-#: /home/miph/Develop/dsp/visualizer.py:82
-msgid "Signals Map Visualizer"
-msgstr ""
-
-#: /home/miph/Develop/dsp/data.py:15
+#: /home/miph/Develop/dsp/data.py:17
 msgid "Channel Data Source (*.bin)"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:16
+#: /home/miph/Develop/dsp/data.py:18
 msgid "Channels Source Bundle (*.txt)"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:53
+#: /home/miph/Develop/dsp/data.py:55
 msgid "signature"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:53
+#: /home/miph/Develop/dsp/data.py:55
 msgid "channel_count"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:53
+#: /home/miph/Develop/dsp/data.py:55
 msgid "fetch_size_per_channel"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:53
+#: /home/miph/Develop/dsp/data.py:55
 msgid "spectral_lines_count"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:53
+#: /home/miph/Develop/dsp/data.py:55
 msgid "slice_freq"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:54
+#: /home/miph/Develop/dsp/data.py:56
 msgid "freq_dimension"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:54
+#: /home/miph/Develop/dsp/data.py:56
 msgid "rcv_time"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:54
+#: /home/miph/Develop/dsp/data.py:56
 msgid "total_rcv_time"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:54
+#: /home/miph/Develop/dsp/data.py:56
 msgid "blocks_count"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:54
+#: /home/miph/Develop/dsp/data.py:56
 msgid "data_size"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:55
+#: /home/miph/Develop/dsp/data.py:57
 msgid "system_rcved_blocks"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:55
+#: /home/miph/Develop/dsp/data.py:57
 msgid "max_value"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:55
+#: /home/miph/Develop/dsp/data.py:57
 msgid "min_value"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:69
+#: /home/miph/Develop/dsp/data.py:73
 #, python-format
 msgid "File is loaded: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:70
+#: /home/miph/Develop/dsp/data.py:74
 #, python-format
 msgid "File info: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:95
+#: /home/miph/Develop/dsp/data.py:126
 #, python-format
 msgid "File does not exist: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:24
+#: /home/miph/Develop/dsp/ui/frames/progress.py:28
+msgid "Progress"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:30
 msgid "Digital Signal Processing"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:59
-#: /home/miph/Develop/dsp/ui/frames/main.py:119
+#: /home/miph/Develop/dsp/ui/frames/main.py:69
+#: /home/miph/Develop/dsp/ui/frames/main.py:128
 msgid "Open data source"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:61
+#: /home/miph/Develop/dsp/ui/frames/main.py:71
 msgid "Save plot"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:63
+#: /home/miph/Develop/dsp/ui/frames/main.py:73
 msgid "Exit"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:64
+#: /home/miph/Develop/dsp/ui/frames/main.py:74
 msgid "File"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:67
+#: /home/miph/Develop/dsp/ui/frames/main.py:77
 msgid "Signal Info Panel"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:74
+#: /home/miph/Develop/dsp/ui/frames/main.py:84
 msgid "Signal"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:77
+#: /home/miph/Develop/dsp/ui/frames/main.py:87
 msgid "Author"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:78
+#: /home/miph/Develop/dsp/ui/frames/main.py:88
 msgid "About"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:105
+#: /home/miph/Develop/dsp/ui/frames/main.py:115
 msgid "Signal Info"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:106
+#: /home/miph/Develop/dsp/ui/frames/main.py:116
 msgid "Values"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:107
+#: /home/miph/Develop/dsp/ui/frames/main.py:117
 msgid "Property"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:108
+#: /home/miph/Develop/dsp/ui/frames/main.py:118
 msgid "Log"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:138
+#: /home/miph/Develop/dsp/ui/frames/main.py:147
 msgid "Save plot as..."
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:50
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:53
 msgid "Parameter"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:51
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:54
 msgid "Value"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:90
+msgid "Static Cursor"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:93
+msgid "Dynamic Cursor"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:98
+#, python-format
+msgid "Frame position: %s/%s"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:99
+#, python-format
+msgid "Zoom: %s%%"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:135
+msgid "Colours"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:138
+msgid "Background Color:"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:143
+msgid "Static Cursor Color:"
+msgstr ""
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:148
+msgid "Dynamic Cursor Color:"
 msgstr ""
