@@ -81,14 +81,14 @@ class BaseVisualizer(object):
             for i, plot in enumerate(self.plots):
                 val_text = plot.text(0.15, 1.04, '', transform=plot.transAxes, fontsize=9, color=self.conf.draw_dynamic_cursor_color)
                 val_text.plot = plot
-                val_text.data = self.data[i]
+                val_text.data = self.processed_data[i]
                 self.cursor.val_texts.append(val_text)
 
     def create_vline(self):
         for i, plot in enumerate(self.plots):
             line = plot.axvline(color=self.conf.draw_static_cursor_color)
             line.plot = plot
-            line.data = self.data[i]
+            line.data = self.processed_data[i]
             line.val_text = plot.text(0.05, 1.04, '', transform=plot.transAxes, fontsize=9, color=self.conf.draw_static_cursor_color)
             self.vline.append(line)
 
@@ -133,23 +133,27 @@ class BaseVisualizer(object):
             self.canvas_panel.Refresh()
             self.canvas.draw()
 
+    def _prepare_static_cursor_value(self, data, event):
+        return '(%.3f, %.3f)' % (
+            data.to_time(event.xdata),
+            data.to_value(event.xdata))
+
     def update_vline(self, event):
         if event.inaxes:
             for line in self.vline:
                 line.set_xdata(event.xdata)
-                line.val_text.set_text('(%.3f, %.3f)' % (
-                    line.data.to_time(event.xdata),
-                    line.data.to_value(event.xdata))
-                )
+                line.val_text.set_text(self._prepare_static_cursor_value(line.data, event))
             self.canvas.draw()
+
+    def _prepare_dynamic_cursor_label(self, data, event):
+        return '(%.3f, %.3f)' % (
+            data.to_time(event.xdata),
+            data.to_value(event.xdata))
 
     def update_cursor_label(self, event):
         if event.inaxes and False: #disabled
             for text in self.cursor.val_texts:
-                text.set_text('(%.3f, %.3f)' % (
-                    text.data.to_time(event.xdata),
-                    text.data.to_value(event.xdata))
-                )
+                text.set_text(self._prepare_dynamic_cursor_label(text.data, event))
             self.canvas.draw()
 
     def update_plots(self):
@@ -252,7 +256,12 @@ class SpectreVisualizer(BaseVisualizer):
         for data in self.data:
             fq = data.header.data_size / data.header.total_rcv_time
 
-            spectrum = get_spectrum(data.float_data[:data.header.spectral_lines_count * 2], 1024)
+            position = self.conf.draw_position
+            page_size = self.conf.draw_page_size
+            frame = (int(position - page_size if position > page_size else 0),
+                     int(position if position >= page_size else page_size))
+
+            spectrum = get_spectrum(data.float_data[slice(*frame)], fq)
 
             self.processed_data.append(spectrum)
 
@@ -263,8 +272,8 @@ class SpectreVisualizer(BaseVisualizer):
             plt.set_title('%s signal' % i, fontsize=9, x=0.02, color=self.conf.draw_plot_title_color)
 
             fq, amp = data
-            plt.plot(fq, amp, color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
-
+            lines = plt.plot(fq, amp, color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
+            plt.fq_amp_lines = lines
             plt.grid(self.conf.draw_plot_grid)
 
             plt.set_xlabel('Fq, Hz', fontsize=9, color=self.conf.draw_plot_title_color)
@@ -286,6 +295,26 @@ class SpectreVisualizer(BaseVisualizer):
         self.canvas.draw()
         progress_release()
 
+    def update_plots(self):
+        self.process()
+        for i, data in enumerate(self.processed_data):
+            plt = self.plots[i]
+            fq, amp = data
+            line = plt.fq_amp_lines[0]
+            line.set_xdata(fq)
+            line.set_ydata(amp)
+
+        self.canvas.draw()
+
+    def _to_amp(self, data, x):
+        from scipy.interpolate import splrep, splev
+        tck = splrep(data[0], data[1], k=1, s=0)
+        return splev(x, tck)
+
+    def _prepare_static_cursor_value(self, data, event):
+        return '(%.3f, %.3f)' % (
+            event.xdata,
+            self._to_amp(data, event.xdata))
 
 class WaveletsVisualizer(BaseVisualizer):
     visualizer_name = _('Wavelets Visualizer')
@@ -310,7 +339,7 @@ class WaveletsVisualizer(BaseVisualizer):
             plt.xaxis.set_label_coords(1.03, -0.02)
 
             plt.xaxis.set_major_locator(ticker.LinearLocator(numticks=15))
-#            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % self.data[i-1].to_time(x)))
+            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % x))
 
             plt.tick_params(axis='both', which='major', labelsize=9)
             plt.tick_params(axis='both', which='minor', labelsize=7)
@@ -328,7 +357,19 @@ class WaveletsVisualizer(BaseVisualizer):
         self.canvas.draw()
         progress_release()
 
+    def update_plots(self):
+        position = self.conf.draw_position
+        page_size = self.conf.draw_page_size
+        frame = (position - page_size if position > page_size else 0,
+                 position if position >= page_size else page_size)
+        for plt in self.plots:
+            plt.set_xlim(frame)
+        self.canvas.draw()
 
+    def _prepare_static_cursor_value(self, data, event):
+        return '(%.3f, %.3f)' % (
+            event.xdata,
+            event.xdata)
 
 # Register
 VISUALIZERS.extend([
