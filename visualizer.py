@@ -321,7 +321,14 @@ class WaveletsVisualizer(BaseVisualizer):
 
     def process(self):
         import pywt
-        self.processed_data = [pywt.dwt(data.float_data, 'db20', 'sp1') for data in self.data]
+        self.processed_data = []
+        for data in (d.clone() for d in self.data):
+            data.float_data = pywt.dwt(data.float_data, 'db20', 'sp1')
+            self.processed_data.append(data)
+
+    def _to_sec(self, data, x):
+        t = np.linspace(0.0, data.header.total_rcv_time / 2, len(data.float_data[1]))
+        return t[int(round(x))]
 
     def create_plots(self):
         for i, data in enumerate(self.processed_data, 1):
@@ -331,7 +338,7 @@ class WaveletsVisualizer(BaseVisualizer):
 
             plt.set_xlim([0, self.conf.draw_page_size])
 
-            plt.plot(data[1], color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
+            plt.plot(data.float_data[1], color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
 
             plt.grid(self.conf.draw_plot_grid)
 
@@ -339,7 +346,7 @@ class WaveletsVisualizer(BaseVisualizer):
             plt.xaxis.set_label_coords(1.03, -0.02)
 
             plt.xaxis.set_major_locator(ticker.LinearLocator(numticks=15))
-            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % x))
+            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % self._to_sec(data, x)))
 
             plt.tick_params(axis='both', which='major', labelsize=9)
             plt.tick_params(axis='both', which='minor', labelsize=7)
@@ -368,12 +375,59 @@ class WaveletsVisualizer(BaseVisualizer):
 
     def _prepare_static_cursor_value(self, data, event):
         return '(%.3f, %.3f)' % (
-            event.xdata,
-            event.xdata)
+            self._to_sec(data, event.xdata),
+            data.float_data[1][int(round(event.xdata))])
+
+
+class SpectrogramVisualizer(SpectreVisualizer):
+    visualizer_name = _('Spectrogram Visualizer')
+
+    def process(self):
+        self.processed_data = []
+        for data in self.data:
+            position = self.conf.draw_position
+            page_size = self.conf.draw_page_size
+            frame = (int(position - page_size if position > page_size else 0),
+                     int(position if position >= page_size else page_size))
+
+            self.processed_data.append(data.float_data[slice(*frame)])
+
+    def create_plots(self):
+        for i, data in enumerate(self.processed_data, 1):
+            plt = self.canvas.figure.add_subplot(len(self.processed_data), 1, i)
+
+            plt.set_title('%s signal' % i, fontsize=9, x=0.02, color=self.conf.draw_plot_title_color)
+            origin_data = self.data[i-1]
+            plt.specgram(data, Fs=origin_data.header.data_size/origin_data.header.total_rcv_time)
+
+            plt.grid(self.conf.draw_plot_grid)
+            plt.xaxis.set_label_coords(1.03, -0.02)
+
+            plt.tick_params(axis='both', which='major', labelsize=9)
+            plt.tick_params(axis='both', which='minor', labelsize=7)
+
+            self.plots.append(plt)
+            progress_tick()
+
+    def draw(self):
+        progress_new(len(self.processed_data) + 2)
+        self.create_plots()
+
+        self.canvas.figure.tight_layout()
+        self.canvas_panel.update_scroll(self.canvas.Size)
+        progress_tick()
+
+        self.canvas.draw()
+        progress_release()
+
+    def update_plots(self):
+        pass
+
 
 # Register
 VISUALIZERS.extend([
     SignalsMapVisualizer,
     SpectreVisualizer,
     WaveletsVisualizer,
+    SpectrogramVisualizer,
 ])
