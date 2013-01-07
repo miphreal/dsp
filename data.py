@@ -68,7 +68,7 @@ class SignalData(object):
             self.header = SignalHeader(*header.unpack(self.data[:header.size]))
             self.raw_signal = self.data[header.size:]
 
-            self.float_data = [unpack('f', self.raw_signal[i:i+4]) for i in xrange(0, len(self.raw_signal)-4, 4)]
+            self.float_data = [unpack('f', self.raw_signal[i:i+4])[0] for i in xrange(0, len(self.raw_signal)-4, 4)]
 
             logger.info(_('File is loaded: %s') % file_name)
             logger.info(_('File info: %s') % repr(self.header))
@@ -88,6 +88,17 @@ class SignalData(object):
         obj = self.clone()
         obj.float_data = obj.float_data[first:last]
         return obj
+
+    def to_time(self, value_position):
+        value_position = int(round(value_position))
+        position_max = len(self.float_data)
+        t_max = self.header.total_rcv_time
+        return float(value_position) / position_max * t_max
+
+    def to_value(self, value_position):
+        value_position = int(round(value_position))
+        return self.float_data[value_position]
+
 
     def __unicode__(self):
         return self.file_name
@@ -110,6 +121,10 @@ class SignalsDataSet(list):
 
     def max_data_size(self):
         return max(data.header.data_size for data in self.signals)
+
+    def pluck(self, attr):
+        return (getattr(data.header, attr, None) for data in self.signals)
+
 
 
 def data_factory(file_name):

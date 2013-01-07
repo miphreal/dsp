@@ -13,7 +13,7 @@ from lib.config import app_config
 from lib.event import trigger, on
 from lib.i18n import gettext as _
 from lib.log import get_logger
-from ui.frames.progress import ProgressWindow
+from ui.frames import progress
 from ui.panels import info_panels
 from ui.panels.canvas_panel import CanvasPanel
 from visualizer import VISUALIZERS
@@ -31,9 +31,10 @@ class MainWindow(wx.Frame):
 
     def __init__(self):
         self.conf = app_config
+        self.VisualizerClass = VISUALIZERS[0]
 
         wx.Frame.__init__(self, None, -1, self.title)
-        self.progress_frame = ProgressWindow(self)
+        progress.setup(self)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.data = None
@@ -78,7 +79,7 @@ class MainWindow(wx.Frame):
         m_info.Check()
         menu_signal.AppendSeparator()
         for visualiser in VISUALIZERS:
-            item = menu_signal.Append(-1, visualiser.visualizer_name)
+            item = menu_signal.Append(-1, visualiser.visualizer_name, kind=wx.ITEM_RADIO)
             self.Bind(wx.EVT_MENU, partial(self.on_choose_visualizer, visualizer_class=visualiser), item)
 
         self.menu_bar.Append(menu_signal, _('Signal'))
@@ -108,12 +109,12 @@ class MainWindow(wx.Frame):
     def create_info_panel(self):
         self.info_panel = wx.Notebook(self.splitter, -1, style=wx.NB_LEFT)
         self.info_panel_signal_info = info_panels.SignalInfo(main_frame=self, parent=self.info_panel)
-        self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
+#        self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
         self.info_panel_properties = info_panels.Properties(main_frame=self, parent=self.info_panel)
         self.info_panel_log = info_panels.Log(main_frame=self, parent=self.info_panel)
 
         self.info_panel.AddPage(self.info_panel_signal_info, _('Signal Info'))
-        self.info_panel.AddPage(self.info_panel_values, _('Values'))
+#        self.info_panel.AddPage(self.info_panel_values, _('Values'))
         self.info_panel.AddPage(self.info_panel_properties, _('Property'))
         self.info_panel.AddPage(self.info_panel_log, _('Log'))
 
@@ -135,8 +136,10 @@ class MainWindow(wx.Frame):
             path = dlg.GetPath()
             self.data = data_factory(path)
             trigger(events.EVENT_DATA_LOADED, data=self.data)
+            self.visualizer = self.VisualizerClass(self.canvas_panel, self.data, self)
 
     def on_choose_visualizer(self, event, visualizer_class=None):
+        self.VisualizerClass = visualizer_class
         self.visualizer = visualizer_class(self.canvas_panel, self.data, self) if visualizer_class is not None else None
 
     def on_export_image(self, event):

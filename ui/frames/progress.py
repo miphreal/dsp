@@ -21,14 +21,19 @@ DEFAULT_PROGRESS_CONFIG = {
 trigger(events.DO_UPDATE_CONFIG, DEFAULT_PROGRESS_CONFIG)
 
 
-class ProgressWindow(wx.Dialog):
+class ProgressWindow(wx.Frame):
     SIZE = (300, 20)
-    def __init__(self, parent):
-        self.conf = app_config
-        wx.Dialog.__init__(self, parent, -1, _('Progress'), size=self.SIZE,
+    def __init__(self, parent=None, conf=app_config):
+        self.parent = parent
+        self.conf = conf
+        super(ProgressWindow, self).__init__(parent, -1, _('Progress'), size=self.SIZE,
             style=wx.DEFAULT_DIALOG_STYLE|wx.FRAME_NO_TASKBAR|wx.FRAME_NO_WINDOW_MENU|wx.BORDER_NONE)
         self.create_progress()
-        on(events.EVENT_CHANGED_PARAMETER_key('main_progress_*'), self.evt_on_change_config_parameter)
+        self.conf.on(events.EVENT_CHANGED_PARAMETER_key('main_progress_*'), self.evt_on_change_config_parameter)
+
+    def morph(self):
+        self.conf.off(events.EVENT_CHANGED_PARAMETER_key('main_progress_*'), [self.evt_on_change_config_parameter])
+        return ProgressWindow(self.parent, self.conf)
 
     ##
     # Interface building
@@ -62,6 +67,13 @@ class ProgressWindow(wx.Dialog):
             self.progress.SetRange(value)
 
 
+
+common_progress = None
+def setup(parent=None):
+    global common_progress
+    common_progress = ProgressWindow(parent)
+
+
 def progress_max(max_position=None):
     if max_position is not None:
         app_config.main_progress_max = max_position
@@ -77,3 +89,8 @@ def progress_new(max_position=None):
 
 def progress_release():
     app_config.main_progress_visible = False
+    global common_progress
+    if common_progress:
+        progress = common_progress.morph()
+        common_progress.Destroy()
+        common_progress = progress

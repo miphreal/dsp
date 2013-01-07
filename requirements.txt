@@ -4,3 +4,4 @@ wxPython==2.8.12.1
 wxPython-common==2.8.12.1
 scipy==0.9.0
 matplotlib==1.1.1rc
+PyWavelets==0.2.2

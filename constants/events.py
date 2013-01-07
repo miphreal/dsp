@@ -28,3 +28,5 @@ EVENT_PANELS_FILES_SELECTED = 'panels:files:selected'   # func(signal_id, signal
 
 # VISUALIZER EVENTS
 EVENT_VISUALIZER_DRAW = 'visualizer:draw'   # func(visualizer)
+EVENT_VISUALIZER_STATIC_CURSOR_CHANGED = 'visualizer:cursor:static:changed'  # func(plot_event, data)
+EVENT_VISUALIZER_DYNAMIC_CURSOR_CHANGED = 'visualizer:cursor:dynamic:changed'  # func(plot_event, data)

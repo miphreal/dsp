@@ -87,18 +87,30 @@ class Values(BaseInfo):
         return wx.BoxSizer(wx.HORIZONTAL)
 
     def _init(self):
+
+        # init ui
         self.static_box_cursor = wx.StaticBox(self, label=_('Static Cursor'))
         self.sizer.Add(self.static_box_cursor, 1, wx.EXPAND)
 
         self.static_box_dynamic_cursor = wx.StaticBox(self, label=_('Dynamic Cursor'))
         self.sizer.Add(self.static_box_dynamic_cursor, 1, wx.EXPAND)
 
+        # bind events
+        on(events.EVENT_VISUALIZER_STATIC_CURSOR_CHANGED, self.evt_on_static_cursor_changed)
+        on(events.EVENT_VISUALIZER_DYNAMIC_CURSOR_CHANGED, self.evt_on_dynamic_cursor_changed)
+
+    def evt_on_static_cursor_changed(self, plot_event, data):
+        pass
+
+    def evt_on_dynamic_cursor_changed(self, plot_event, data):
+        pass
+
 
 class Properties(BaseInfo):
     slider_label = _('Frame position: %s/%s')
-    zoom_label = _('Zoom: %s%%')
+    zoom_label = _('Zoom: %s%% (width: %s)')
 
-    ZOOM_DIM = 10000
+    ZOOM_DIM = 1000000
 
     def _init(self):
         self.max_data_size = 0
@@ -125,13 +137,25 @@ class Properties(BaseInfo):
         self.sizer.Add(self.slider, 0, wx.EXPAND)
         self.sizer.Add(self.slider_text, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
+    def _update_slider(self):
+        self.slider.SetMax(self.max_data_size)
+        self.slider.SetValue(self.conf.draw_page_size)
+        self.slider_text.SetLabel(self.slider_label % (self.slider.GetValue(), self.max_data_size))
+
     def _create_zoom(self):
-        self.zoom_text = wx.StaticText(self, label=self.zoom_label % 1)
+        self.zoom_text = wx.StaticText(self, label=self.zoom_label % ('~', self.conf.draw_page_size))
         self.zoom = wx.Slider(self, minValue=1, maxValue=self.ZOOM_DIM, value=1)
         self.sizer.Add(self.zoom_text, 0, wx.ALIGN_LEFT)
         self.sizer.Add(self.zoom, 0, wx.EXPAND)
-    def _zoom_value_from(self, value): return float(value) / self.ZOOM_DIM * 100.0
-    def _zoom_value_to(self, value): return round(float(value) / self.max_data_size * self.ZOOM_DIM)
+
+    def _zoom_get_percent(self): return float(self.zoom.GetValue()) / self.ZOOM_DIM * 100.0
+    def _zoom_get_page_size(self): return int(round(float(self.zoom.GetValue()) / self.ZOOM_DIM * self.max_data_size))
+    def _zoom_get_zoom_value_from_page_size(self): return float(self.conf.draw_page_size) / self.max_data_size * self.ZOOM_DIM
+
+    def _update_zoom(self, set_value=True):
+        if set_value:
+            self.zoom.SetValue(self._zoom_get_zoom_value_from_page_size())
+        self.zoom_text.SetLabel(self.zoom_label % (self._zoom_get_percent(), self._zoom_get_page_size()))
 
     def _create_color_props(self):
         self.colour_box = wx.StaticBox(self, label=_('Colours'))
@@ -157,13 +181,9 @@ class Properties(BaseInfo):
         data = self.data
         if data:
             self.max_data_size = data.max_data_size()
-            self.slider.SetMax(self.max_data_size)
-            self.slider.SetValue(self.conf.draw_page_size)
-            self.slider_text.SetLabel(self.slider_label % (self.slider.GetValue(), self.max_data_size))
-
-            self.zoom.SetValue(self._zoom_value_to(self.conf.draw_page_size))
-            self.zoom_text.SetLabel(self.zoom_label % self._zoom_value_to(self.zoom.GetValue()))
-
+            self.conf.draw_page_size = data.pluck('slice_freq').next()
+            self._update_slider()
+            self._update_zoom()
 
     def evt_update_scroll_label(self, event):
         self.slider_text.SetLabel(self.slider_label % (self.slider.GetValue(), self.max_data_size))
@@ -172,10 +192,10 @@ class Properties(BaseInfo):
         self.conf.draw_position = self.slider.GetValue()
 
     def evt_update_zoom_label(self, event):
-        self.zoom_text.SetLabel(self.zoom_label % self._zoom_value_from(self.zoom.GetValue()))
+        self._update_zoom(False)
 
     def evt_set_config_zoom(self, event):
-        self.conf.draw_page_size = self.zoom.GetValue() * self.max_data_size / self.ZOOM_DIM
+        self.conf.draw_page_size = self._zoom_get_page_size()
 
     def evt_on_select_bg_colour(self, event):
         self.conf.draw_facecolor = '#{:02X}{:02X}{:02X}'.format(*event.Colour.Get())

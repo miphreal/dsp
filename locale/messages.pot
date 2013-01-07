@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-06 03:21+0300\n"
+"POT-Creation-Date: 2013-01-07 14:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/miph/Develop/dsp/visualizer.py:31
+#: /home/miph/Develop/dsp/visualizer.py:39
 msgid "Base Visualizer"
 msgstr ""
 
-#: /home/miph/Develop/dsp/visualizer.py:147
+#: /home/miph/Develop/dsp/visualizer.py:170
 msgid "Clear Signals Map Visualizer"
+msgstr ""
+
+#: /home/miph/Develop/dsp/visualizer.py:209
+msgid "Spectre Visualizer"
+msgstr ""
+
+#: /home/miph/Develop/dsp/visualizer.py:265
+msgid "Wavelets Visualizer"
 msgstr ""
 
 #: /home/miph/Develop/dsp/data.py:17
@@ -95,12 +103,12 @@ msgstr ""
 msgid "File info: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/data.py:126
+#: /home/miph/Develop/dsp/data.py:135
 #, python-format
 msgid "File does not exist: %s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/progress.py:28
+#: /home/miph/Develop/dsp/ui/frames/progress.py:29
 msgid "Progress"
 msgstr ""
 
@@ -108,56 +116,52 @@ msgstr ""
 msgid "Digital Signal Processing"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:69
-#: /home/miph/Develop/dsp/ui/frames/main.py:128
+#: /home/miph/Develop/dsp/ui/frames/main.py:70
+#: /home/miph/Develop/dsp/ui/frames/main.py:129
 msgid "Open data source"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:71
+#: /home/miph/Develop/dsp/ui/frames/main.py:72
 msgid "Save plot"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:73
+#: /home/miph/Develop/dsp/ui/frames/main.py:74
 msgid "Exit"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:74
+#: /home/miph/Develop/dsp/ui/frames/main.py:75
 msgid "File"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:77
+#: /home/miph/Develop/dsp/ui/frames/main.py:78
 msgid "Signal Info Panel"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:84
+#: /home/miph/Develop/dsp/ui/frames/main.py:85
 msgid "Signal"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:87
+#: /home/miph/Develop/dsp/ui/frames/main.py:88
 msgid "Author"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:88
+#: /home/miph/Develop/dsp/ui/frames/main.py:89
 msgid "About"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:115
+#: /home/miph/Develop/dsp/ui/frames/main.py:116
 msgid "Signal Info"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:116
-msgid "Values"
-msgstr ""
-
-#: /home/miph/Develop/dsp/ui/frames/main.py:117
+#: /home/miph/Develop/dsp/ui/frames/main.py:118
 msgid "Property"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:118
+#: /home/miph/Develop/dsp/ui/frames/main.py:119
 msgid "Log"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:147
+#: /home/miph/Develop/dsp/ui/frames/main.py:150
 msgid "Save plot as..."
 msgstr ""
 
@@ -169,36 +173,36 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:90
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:92
 msgid "Static Cursor"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:93
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:95
 msgid "Dynamic Cursor"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:98
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:110
 #, python-format
 msgid "Frame position: %s/%s"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:99
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:111
 #, python-format
-msgid "Zoom: %s%%"
+msgid "Zoom: %s%% (width: %s)"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:135
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:161
 msgid "Colours"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:138
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:164
 msgid "Background Color:"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:143
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:169
 msgid "Static Cursor Color:"
 msgstr ""
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:148
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:174
 msgid "Dynamic Cursor Color:"
 msgstr ""

@@ -3,6 +3,8 @@
 Set of classes to represent the data
 """
 import wx
+import numpy as np
+from matplotlib import ticker
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from matplotlib.widgets import MultiCursor
@@ -11,6 +13,7 @@ from constants import events
 from lib.config import app_config
 from lib.event import app_events, trigger, on
 from lib.i18n import gettext as _
+from ui.frames.progress import progress_new, progress_release, progress_tick
 
 
 VISUALIZERS = []
@@ -18,11 +21,16 @@ VISUALIZERS = []
 DEFAULT_DRAW_CONFIG = {
     'draw_dpi': 100,
     'draw_figure_height': 2.0,
-    'draw_page_size': 1000,
+    'draw_page_size': 3000,
     'draw_position': 0,
     'draw_facecolor': '#D4EF9F',
     'draw_static_cursor_color': '#21009B',
     'draw_dynamic_cursor_color': '#FF4D4D',
+    'draw_plot_line_color': 'k',
+    'draw_plot_line_linestyle': '-',
+    'draw_plot_grid': True,
+    'draw_plot_xlabel': 't, c',
+    'draw_plot_title_color': '#395404',
 }
 app_events.trigger(events.DO_UPDATE_CONFIG, DEFAULT_DRAW_CONFIG)
 
@@ -47,8 +55,8 @@ class BaseVisualizer(object):
         self.process()
 
         # prepare canvas
-        size = self.canvas_panel.Size
-        figsize = (float(size[0]) / self.conf.draw_dpi, self.conf.draw_figure_height * len(self.data))
+        self.canvas_width, self.canvas_height = self.canvas_panel.Size
+        figsize = (float(self.canvas_width) / self.conf.draw_dpi, self.conf.draw_figure_height * len(self.data))
         self.fig = Figure(
             dpi=self.conf.draw_dpi,
             facecolor=self.conf.draw_facecolor,
@@ -60,16 +68,29 @@ class BaseVisualizer(object):
         self.draw()
 
         # bind events
+        self.canvas_panel.Bind(wx.EVT_SIZE, self.evt_on_resize_panel)
         on(events.EVENT_VISUALIZER_DRAW, self.on_any_visualizer_draw)
         self.conf.on(events.EVENT_CHANGED_PARAMETER_key('draw_*'), self.on_config_changed)
         self.on('button_press_event', self.on_button_press_event)
         self.on('motion_notify_event', self.on_motion_notify_event)
 
     def create_cursor(self):
-        self.cursor = MultiCursor(self.fig.canvas, self.plots, color=self.conf.draw_dynamic_cursor_color, lw=1)
+        if self.plots:
+            self.cursor = MultiCursor(self.fig.canvas, self.plots, color=self.conf.draw_dynamic_cursor_color, lw=1)
+            self.cursor.val_texts = []
+            for i, plot in enumerate(self.plots):
+                val_text = plot.text(0.15, 1.04, '', transform=plot.transAxes, fontsize=9, color=self.conf.draw_dynamic_cursor_color)
+                val_text.plot = plot
+                val_text.data = self.data[i]
+                self.cursor.val_texts.append(val_text)
 
     def create_vline(self):
-        self.vline.extend(plot.axvline(color=self.conf.draw_static_cursor_color) for plot in self.plots)
+        for i, plot in enumerate(self.plots):
+            line = plot.axvline(color=self.conf.draw_static_cursor_color)
+            line.plot = plot
+            line.data = self.data[i]
+            line.val_text = plot.text(0.05, 1.04, '', transform=plot.transAxes, fontsize=9, color=self.conf.draw_static_cursor_color)
+            self.vline.append(line)
 
     def on(self, event, func):
         """ Canvas events """
@@ -78,6 +99,7 @@ class BaseVisualizer(object):
     def on_any_visualizer_draw(self, visualizer):
         if visualizer is not self:
             self.clear()
+            self.conf.off(events.EVENT_CHANGED_PARAMETER_key('draw_*'), [self.on_config_changed])
 
     def on_config_changed(self, key, value):
         if key in ('draw_position', 'draw_page_size'):
@@ -94,14 +116,41 @@ class BaseVisualizer(object):
             self.canvas.draw()
 
     def on_button_press_event(self, event):
-        self.update_vline(event.xdata)
+        self.update_vline(event)
+        if event.inaxes is not None and self.canvas.widgetlock.available(self):
+            self.events.trigger(events.EVENT_VISUALIZER_STATIC_CURSOR_CHANGED, plot_event=event, data=self.processed_data)
 
-    def on_motion_notify_event(self, event): pass
+    def on_motion_notify_event(self, event):
+        self.update_cursor_label(event)
+        if event.inaxes is not None and self.canvas.widgetlock.available(self):
+            self.events.trigger(events.EVENT_VISUALIZER_DYNAMIC_CURSOR_CHANGED, plot_event=event, data=self.processed_data)
 
-    def update_vline(self, x):
-        for line in self.vline:
-            line.set_xdata(x)
-        self.canvas.draw()
+    def evt_on_resize_panel(self, event):
+        cur_width = self.canvas_panel.Size[0]
+        if self.canvas_width != cur_width:
+            self.canvas_width = cur_width
+            self.fig.set_figwidth(float(self.canvas_width) / self.conf.draw_dpi)
+            self.canvas_panel.Refresh()
+            self.canvas.draw()
+
+    def update_vline(self, event):
+        if event.inaxes:
+            for line in self.vline:
+                line.set_xdata(event.xdata)
+                line.val_text.set_text('(%.3f, %.3f)' % (
+                    line.data.to_time(event.xdata),
+                    line.data.to_value(event.xdata))
+                )
+            self.canvas.draw()
+
+    def update_cursor_label(self, event):
+        if event.inaxes and False: #disabled
+            for text in self.cursor.val_texts:
+                text.set_text('(%.3f, %.3f)' % (
+                    text.data.to_time(event.xdata),
+                    text.data.to_value(event.xdata))
+                )
+            self.canvas.draw()
 
     def update_plots(self):
         position = self.conf.draw_position
@@ -152,19 +201,138 @@ class SignalsMapVisualizer(BaseVisualizer):
     def create_plots(self):
         for i, data in enumerate(self.processed_data, 1):
             plt = self.canvas.figure.add_subplot(len(self.processed_data), 1, i)
+
+            plt.set_title('%s signal' % i, fontsize=9, x=0.02, color=self.conf.draw_plot_title_color)
+
             plt.set_xlim([0, self.conf.draw_page_size])
-            plt.plot(data.float_data, 'k-')
+            plt.plot(data.float_data, color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
+            plt.grid(self.conf.draw_plot_grid)
+
+            plt.set_xlabel(self.conf.draw_plot_xlabel, fontsize=9, color=self.conf.draw_plot_title_color)
+            plt.xaxis.set_label_coords(1.03, -0.02)
+
+            plt.xaxis.set_major_locator(ticker.LinearLocator(numticks=15))
+            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % data.to_time(x)))
+
+            plt.tick_params(axis='both', which='major', labelsize=9)
+            plt.tick_params(axis='both', which='minor', labelsize=7)
 
             self.plots.append(plt)
+            progress_tick()
 
     def draw(self):
+        progress_new(len(self.processed_data) + 2)
         self.create_plots()
 
         self.create_aux()
+        progress_tick()
 
         self.canvas.draw()
+        progress_release()
+
+
+class SpectreVisualizer(BaseVisualizer):
+    visualizer_name = _('Spectre Visualizer')
+
+    def process(self):
+        from scipy import fftpack
+
+        def get_spectrum(signal, fq):
+            signal = np.array(signal)
+            n = len(signal)
+            half = n / 2
+            tm = float(n) / fq # time
+
+            FFT = fftpack.fft(signal) / n
+
+            frq = np.arange(half) / tm
+            return frq, np.abs(FFT[:half])
+
+        self.processed_data = []
+        for data in self.data:
+            fq = data.header.data_size / data.header.total_rcv_time
+
+            spectrum = get_spectrum(data.float_data[:data.header.spectral_lines_count * 2], 1024)
+
+            self.processed_data.append(spectrum)
+
+    def create_plots(self):
+        for i, data in enumerate(self.processed_data, 1):
+            plt = self.canvas.figure.add_subplot(len(self.processed_data), 1, i)
+
+            plt.set_title('%s signal' % i, fontsize=9, x=0.02, color=self.conf.draw_plot_title_color)
+
+            fq, amp = data
+            plt.plot(fq, amp, color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
+
+            plt.grid(self.conf.draw_plot_grid)
+
+            plt.set_xlabel('Fq, Hz', fontsize=9, color=self.conf.draw_plot_title_color)
+            plt.xaxis.set_label_coords(1.03, -0.02)
+
+            plt.tick_params(axis='both', which='major', labelsize=9)
+            plt.tick_params(axis='both', which='minor', labelsize=7)
+
+            self.plots.append(plt)
+            progress_tick()
+
+    def draw(self):
+        progress_new(len(self.processed_data) + 2)
+        self.create_plots()
+
+        self.create_aux()
+        progress_tick()
+
+        self.canvas.draw()
+        progress_release()
+
+
+class WaveletsVisualizer(BaseVisualizer):
+    visualizer_name = _('Wavelets Visualizer')
+
+    def process(self):
+        import pywt
+        self.processed_data = [pywt.dwt(data.float_data, 'db20', 'sp1') for data in self.data]
+
+    def create_plots(self):
+        for i, data in enumerate(self.processed_data, 1):
+            plt = self.canvas.figure.add_subplot(len(self.processed_data), 1, i)
+
+            plt.set_title('%s signal' % i, fontsize=9, x=0.02, color=self.conf.draw_plot_title_color)
+
+            plt.set_xlim([0, self.conf.draw_page_size])
+
+            plt.plot(data[1], color=self.conf.draw_plot_line_color, linestyle=self.conf.draw_plot_line_linestyle)
+
+            plt.grid(self.conf.draw_plot_grid)
+
+            plt.set_xlabel(self.conf.draw_plot_xlabel, fontsize=9, color=self.conf.draw_plot_title_color)
+            plt.xaxis.set_label_coords(1.03, -0.02)
+
+            plt.xaxis.set_major_locator(ticker.LinearLocator(numticks=15))
+#            plt.xaxis.set_major_formatter(ticker.FuncFormatter(func=lambda x, pos: '%.3f' % self.data[i-1].to_time(x)))
+
+            plt.tick_params(axis='both', which='major', labelsize=9)
+            plt.tick_params(axis='both', which='minor', labelsize=7)
+
+            self.plots.append(plt)
+            progress_tick()
+
+    def draw(self):
+        progress_new(len(self.processed_data) + 2)
+        self.create_plots()
+
+        self.create_aux()
+        progress_tick()
+
+        self.canvas.draw()
+        progress_release()
+
+
 
 # Register
 VISUALIZERS.extend([
     SignalsMapVisualizer,
+    SpectreVisualizer,
+    WaveletsVisualizer,
 ])
