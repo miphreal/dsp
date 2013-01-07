@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 14:12+0300\n"
+"POT-Creation-Date: 2013-01-07 21:11+0300\n"
 "PO-Revision-Date: 2012-12-13 00:29+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "Base Visualizer"
 msgstr "Базовый отрисовщик данных"
 
-#: /home/miph/Develop/dsp/visualizer.py:170
+#: /home/miph/Develop/dsp/visualizer.py:200
 msgid "Clear Signals Map Visualizer"
 msgstr "Чистый сигнал"
 
-#: /home/miph/Develop/dsp/visualizer.py:209
+#: /home/miph/Develop/dsp/visualizer.py:239
 msgid "Spectre Visualizer"
 msgstr "Спектр сигнала"
 
-#: /home/miph/Develop/dsp/visualizer.py:265
+#: /home/miph/Develop/dsp/visualizer.py:320
 msgid "Wavelets Visualizer"
 msgstr "Вейвлет сигнала"
+
+#: /home/miph/Develop/dsp/visualizer.py:383
+msgid "Spectrogram Visualizer"
+msgstr "Спектрограмма сигнала"
 
 #: /home/miph/Develop/dsp/data.py:17
 msgid "Channel Data Source (*.bin)"
@@ -107,7 +111,7 @@ msgstr "Файл загружен: %s"
 msgid "File info: %s"
 msgstr "Информация о файле: %s"
 
-#: /home/miph/Develop/dsp/data.py:135
+#: /home/miph/Develop/dsp/data.py:141
 #, python-format
 msgid "File does not exist: %s"
 msgstr "Указанный файл не существует: %s"
@@ -121,7 +125,7 @@ msgid "Digital Signal Processing"
 msgstr "Цифровая обработка сигнала"
 
 #: /home/miph/Develop/dsp/ui/frames/main.py:70
-#: /home/miph/Develop/dsp/ui/frames/main.py:129
+#: /home/miph/Develop/dsp/ui/frames/main.py:130
 msgid "Open data source"
 msgstr "Открыть файлы с данными"
 
@@ -146,6 +150,7 @@ msgid "Signal"
 msgstr "Сигнал"
 
 #: /home/miph/Develop/dsp/ui/frames/main.py:88
+#: /home/miph/Develop/dsp/ui/frames/main.py:172
 msgid "Author"
 msgstr "Автор"
 
@@ -153,73 +158,110 @@ msgstr "Автор"
 msgid "About"
 msgstr "О программе"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:116
+#: /home/miph/Develop/dsp/ui/frames/main.py:117
 msgid "Signal Info"
 msgstr "Информация о сигнале"
 
 #: /home/miph/Develop/dsp/ui/frames/main.py:118
+msgid "Values"
+msgstr "Значения"
+
+#: /home/miph/Develop/dsp/ui/frames/main.py:119
 msgid "Property"
 msgstr "Параметры показа"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:119
+#: /home/miph/Develop/dsp/ui/frames/main.py:120
 msgid "Log"
 msgstr "Лог"
 
-#: /home/miph/Develop/dsp/ui/frames/main.py:150
+#: /home/miph/Develop/dsp/ui/frames/main.py:151
 msgid "Save plot as..."
 msgstr "Экспорт графика"
 
+#: /home/miph/Develop/dsp/ui/frames/main.py:172
+msgid "Evgeny Lychkovsky, 2013, BSUIR, DSP"
+msgstr "Евгений Лычковский, 2013, БГУИР, DSP"
+
 #: /home/miph/Develop/dsp/ui/panels/info_panels.py:53
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:105
 msgid "Parameter"
 msgstr "Параметр"
 
 #: /home/miph/Develop/dsp/ui/panels/info_panels.py:54
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:106
 msgid "Value"
-msgstr "Значение"
+msgstr "Значения"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:87
+msgid "Range"
+msgstr "Диапазон по времени"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:88
+msgid "Number of values"
+msgstr "Числов учитываемых значений"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:89
+msgid "Abs Max"
+msgstr "Абсолютное значение максимума"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:90
+msgid "Abs Min"
+msgstr "Абсолютное значение минимума"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:91
+msgid "Power of signal"
+msgstr "Мощьность сигнала"
 
 #: /home/miph/Develop/dsp/ui/panels/info_panels.py:92
-msgid "Static Cursor"
-msgstr "Статический курсор"
+msgid "Range of vibration"
+msgstr "Размах колебаний"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:95
-msgid "Dynamic Cursor"
-msgstr "Динамический курсор"
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:93
+msgid "Average value"
+msgstr "Среднее значение"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:110
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:94
+msgid "Effective value"
+msgstr "Среднее квадратическое значение"
+
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:177
 #, python-format
 msgid "Frame position: %s/%s"
 msgstr ""
 "Позиция отображаемой области "
 "(конечная точка): %s/%s"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:111
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:178
 #, python-format
 msgid "Zoom: %s%% (width: %s)"
 msgstr ""
 "Масштаб: %s%% "
 "(ширина отображаемых значений: %s)"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:161
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:228
 msgid "Colours"
 msgstr "Цвета"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:164
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:231
 msgid "Background Color:"
 msgstr "Цвет фона:"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:169
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:236
 msgid "Static Cursor Color:"
 msgstr "Статический курсор:"
 
-#: /home/miph/Develop/dsp/ui/panels/info_panels.py:174
+#: /home/miph/Develop/dsp/ui/panels/info_panels.py:241
 msgid "Dynamic Cursor Color:"
 msgstr "Динамический курсор:"
 
+#~ msgid "Static Cursor"
+#~ msgstr "Статический курсор"
+
+#~ msgid "Dynamic Cursor"
+#~ msgstr "Динамический курсор"
+
 #~ msgid "%s signal"
 #~ msgstr "%s сигнал"
-
-#~ msgid "Values"
-#~ msgstr "Значения"
 
 #~ msgid "Files"
 #~ msgstr "Файлы"

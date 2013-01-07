@@ -4,7 +4,7 @@ Set of panels to show state information
 """
 
 import wx
-from wx._windows import ColourDialog
+import numpy as np
 
 from constants import events
 from lib.config import app_config
@@ -83,27 +83,95 @@ class SignalInfo(BaseInfo):
 
 
 class Values(BaseInfo):
+    _fields = (
+        (_('Range'), 'range'),
+        (_('Number of values'), 'num'),
+        (_('Abs Max'), 'abs_max'),
+        (_('Abs Min'), 'abs_min'),
+        (_('Power of signal'), 'power'),
+        (_('Range of vibration'), 'range_vibration'),
+        (_('Average value'), 'avg'),
+        (_('Effective value'), 'avg_sqr'),
+    )
+
     def _get_sizer(self):
         return wx.BoxSizer(wx.HORIZONTAL)
 
     def _init(self):
+        self.list_box_files = wx.ListBox(self)
+        self.sizer.Add(self.list_box_files, 1, wx.EXPAND, 0)
 
-        # init ui
-        self.static_box_cursor = wx.StaticBox(self, label=_('Static Cursor'))
-        self.sizer.Add(self.static_box_cursor, 1, wx.EXPAND)
+        self.list_ctrl_info = wx.ListCtrl(self, -1, style=wx.LC_REPORT | wx.LC_ALIGN_LEFT | wx.SUNKEN_BORDER)
+        self.list_ctrl_info.InsertColumn( 0, _('Parameter'), width=400)
+        self.list_ctrl_info.InsertColumn( 1, _('Value'), width=200)
+        self.sizer.Add(self.list_ctrl_info, 1, wx.EXPAND, 0)
 
-        self.static_box_dynamic_cursor = wx.StaticBox(self, label=_('Dynamic Cursor'))
-        self.sizer.Add(self.static_box_dynamic_cursor, 1, wx.EXPAND)
+        on(events.EVENT_DATA_LOADED, self.on_data_load)
+        self.list_box_files.Bind(wx.EVT_LISTBOX, self.on_select_signal)
 
-        # bind events
-        on(events.EVENT_VISUALIZER_STATIC_CURSOR_CHANGED, self.evt_on_static_cursor_changed)
-        on(events.EVENT_VISUALIZER_DYNAMIC_CURSOR_CHANGED, self.evt_on_dynamic_cursor_changed)
+    def on_select_signal(self, event):
+        self._show_signal_info(signal_id=event.Int)
+        trigger(events.EVENT_PANELS_FILES_SELECTED, signal_id=event.Int, signal=self.data[event.Int])
 
-    def evt_on_static_cursor_changed(self, plot_event, data):
-        pass
+    def on_data_load(self, *args, **kwargs):
+        # init file list
+        self.list_box_files.SetItems([f.file_name for f in self.data])
+        self.list_box_files.Select(0)
 
-    def evt_on_dynamic_cursor_changed(self, plot_event, data):
-        pass
+        # init signal info
+        self._show_signal_info()
+
+    def _show_signal_info(self, signal_id=0):
+        self.list_ctrl_info.DeleteAllItems()
+        data = self.data[signal_id]
+        for field, func_name in self._fields:
+            self._insert_entry(field, unicode(getattr(self, func_name)(data)))
+
+    def _insert_entry(self, label, value):
+        index = self.list_ctrl_info.GetItemCount()
+        self.list_ctrl_info.InsertStringItem(index, label)
+        self.list_ctrl_info.SetStringItem(index, 1, value)
+
+    def _f(self, data):
+        position = self.conf.draw_position
+        page_size = self.conf.draw_page_size
+        floor = int(position - page_size if position > page_size else 0)
+        ceil = int(position if position >= page_size else page_size)
+        return np.array(data.float_data[floor:ceil])
+
+    def num(self, data):
+        return len(self._f(data))
+
+    def range(self, data):
+        position = self.conf.draw_position
+        page_size = self.conf.draw_page_size
+        floor = int(position - page_size if position > page_size else 0)
+        ceil = int(position if position >= page_size else page_size)
+        return '%.4f - %.4f sec' % (data.to_time(floor), data.to_time(ceil))
+
+    def abs_max(self, data):
+        d = self._f(data)
+        return np.abs(np.max(d))
+
+    def abs_min(self, data):
+        d = self._f(data)
+        return np.abs(np.min(d))
+
+    def avg(self, data):
+        d = self._f(data)
+        return np.average(d)
+
+    def power(self, data):
+        d = self._f(data)
+        return np.average(np.square(d))
+
+    def range_vibration(self, data):
+        d = self._f(data)
+        return np.max(d) - np.min(d)
+
+    def avg_sqr(self, data):
+        import math
+        return math.sqrt(self.power(data))
 
 
 class Properties(BaseInfo):

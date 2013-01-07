@@ -93,6 +93,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_export_image, m_expt)
         self.Bind(wx.EVT_MENU, self.on_exit, m_exit)
         self.Bind(wx.EVT_MENU, self.on_info_panel, m_info)
+        self.Bind(wx.EVT_MENU, self.on_autor, m_author)
 
         # bind to the frame
         self.SetMenuBar(self.menu_bar)
@@ -109,12 +110,12 @@ class MainWindow(wx.Frame):
     def create_info_panel(self):
         self.info_panel = wx.Notebook(self.splitter, -1, style=wx.NB_LEFT)
         self.info_panel_signal_info = info_panels.SignalInfo(main_frame=self, parent=self.info_panel)
-#        self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
+        self.info_panel_values = info_panels.Values(main_frame=self, parent=self.info_panel)
         self.info_panel_properties = info_panels.Properties(main_frame=self, parent=self.info_panel)
         self.info_panel_log = info_panels.Log(main_frame=self, parent=self.info_panel)
 
         self.info_panel.AddPage(self.info_panel_signal_info, _('Signal Info'))
-#        self.info_panel.AddPage(self.info_panel_values, _('Values'))
+        self.info_panel.AddPage(self.info_panel_values, _('Values'))
         self.info_panel.AddPage(self.info_panel_properties, _('Property'))
         self.info_panel.AddPage(self.info_panel_log, _('Log'))
 
@@ -166,3 +167,6 @@ class MainWindow(wx.Frame):
             self.splitter.SplitHorizontally(self.canvas_panel, self.info_panel)
         else:
             self.splitter.Unsplit(self.info_panel)
+
+    def on_autor(self, event):
+        wx.MessageBox(_('Evgeny Lychkovsky, 2013, BSUIR, DSP'), _('Author'))
